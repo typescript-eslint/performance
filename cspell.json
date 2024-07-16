@@ -1,0 +1,5 @@
+{
+	"dictionaries": ["typescript"],
+	"ignorePaths": [".github", "node_modules", "yarn.yaml"],
+	"words": ["execa", "knip", "packagejson", "tseslint"]
+}

@@ -1,0 +1,79 @@
+{
+	"name": "performance",
+	"private": true,
+	"description": "Various performance baselines for typescript-eslint.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/typescript-eslint/performance"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Josh Goldberg",
+		"email": "npm@joshuakgoldberg.com"
+	},
+	"type": "module",
+	"files": [
+		"package.json",
+		"LICENSE.md",
+		"README.md"
+	],
+	"workspaces": [
+		"cases/*"
+	],
+	"scripts": {
+		"format": "prettier .",
+		"generate": "node --import tsx/esm src/generate.ts",
+		"generate:watch": "node --import tsx/esm --watch src/generate.ts",
+		"lint": "eslint . --max-warnings 0",
+		"lint:knip": "knip",
+		"lint:md": "markdownlint \"**/*.md\" \".github/**/*.md\" --rules sentences-per-line",
+		"lint:spelling": "cspell \"**\" \".github/**/*\"",
+		"measure": "node --import tsx/esm src/measure.ts",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"*": "prettier --ignore-unknown --write"
+	},
+	"dependencies": {
+		"console-table-without-index": "^0.1.0",
+		"execa": "^9.3.0",
+		"prettier": "^3.3.2"
+	},
+	"devDependencies": {
+		"@eslint-community/eslint-plugin-eslint-comments": "^4.3.0",
+		"@eslint/js": "^9.6.0",
+		"@types/eslint-plugin-markdown": "^2.0.2",
+		"@types/eslint__js": "^8.42.3",
+		"@types/node": "^20.14.10",
+		"cspell": "^8.10.4",
+		"eslint": "^9.6.0",
+		"eslint-plugin-jsdoc": "^48.7.0",
+		"eslint-plugin-jsonc": "^2.16.0",
+		"eslint-plugin-markdown": "^5.0.0",
+		"eslint-plugin-n": "^17.9.0",
+		"eslint-plugin-package-json": "^0.15.2",
+		"eslint-plugin-perfectionist": "^2.11.0",
+		"eslint-plugin-regexp": "^2.6.0",
+		"eslint-plugin-yml": "^1.14.0",
+		"husky": "^9.0.11",
+		"jsonc-eslint-parser": "^2.4.0",
+		"knip": "^5.25.2",
+		"lint-staged": "^15.2.7",
+		"markdownlint": "^0.34.0",
+		"markdownlint-cli": "^0.41.0",
+		"prettier-plugin-curly": "^0.2.1",
+		"prettier-plugin-packagejson": "^2.5.0",
+		"prettier-plugin-sh": "^0.14.0",
+		"sentences-per-line": "^0.2.1",
+		"tsx": "^4.16.2",
+		"typescript": "^5.5.3",
+		"typescript-eslint": "^7.16.0"
+	},
+	"packageManager": "yarn@3.8.2",
+	"engines": {
+		"node": ">=22"
+	},
+	"publishConfig": {
+		"provenance": true
+	}
+}
