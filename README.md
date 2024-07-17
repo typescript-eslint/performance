@@ -51,10 +51,12 @@ This is a performance issue and we are investigating it as a critical bug for v8
 ┴───────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┘
 ```
 
+See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.projectService no longer outperforms parserOptions.project](https://github.com/typescript-eslint/typescript-eslint/issues/9571)
+
 ## Notes
 
 - Example measurements taken on an M1 Max Mac Studio with Node.js 22.4.1
-- These issues occur with TypeScript 5.4.5 and 5.5.3
+- These results are similar across TypeScript versions: 5.0.4, 5.4.5, and 5.5.3
 
 ## Contributors
 
