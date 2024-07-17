@@ -15,10 +15,40 @@
 
 ## Usage
 
+You'll need [hyperfine](https://github.com/sharkdp/hyperfine) installed locally, such as with `brew install hyperfine` or `winget install hyperfine`.
+See [sharkdp/hyperfine#installation](https://github.com/sharkdp/hyperfine#installation).
+
 ```shell
 npm install
 npm generate
 npm measure
+```
+
+### Measured Attributes
+
+The `caseEntries` values in `src/data.ts` can be modified to test:
+
+- `files`: roughly how many generated files should be linted
+- `layout`: what rough shape of imports those files exhibit:
+  - `"even"`: a single root-level `index.ts` importing from roughly an even triangle shape of files
+  - `"references"`: a single root-level `tsconfig.json` with project references to a few projects
+  - `"wide"`: one root-level `index.ts` importing from all files in the project
+- `singleRun`: whether to enable [single-run inference](https://v8--typescript-eslint.netlify.app/packages/parser#disallowautomaticsingleruninference) as a performance boost
+- `types`: whether to use `parserOptions.project` or `parserOptions.projectService` for typed linting
+
+## Results
+
+Right now, `parserOptions.project` outperforms `parserOptions.projectService`.
+This is a performance issue and we are investigating it as a critical bug for v8.
+
+```plaintext
+┌───────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┐
+│ files │ project (even)       │ project (references) │ service (even)       │ service (references) │
+┼───────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤
+│ 128   │ '1.149 s ±  0.030 s' │ '1.135 s ±  0.008 s' │ '1.178 s ±  0.010 s' │ '1.736 s ±  0.012 s' │
+│ 512   │ '1.636 s ±  0.009 s' │ '1.656 s ±  0.004 s' │ '1.895 s ±  0.007 s' │ '2.613 s ±  0.020 s' │
+│ 1024  │ '2.353 s ±  0.013 s' │ '2.399 s ±  0.016 s' │ '3.130 s ±  0.017 s' │ '4.034 s ±  0.061 s' │
+┴───────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┘
 ```
 
 ## Contributors

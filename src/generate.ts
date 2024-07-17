@@ -2,56 +2,27 @@ import { execa } from "execa";
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { createESLintConfigFile, writeCaseFiles } from "./creators/files.js";
+import { writeCaseFiles } from "./creators/writeCaseFiles.js";
+import { createPackageFile } from "./creators/files/createPackageFile.js";
+import { createESLintConfigFile } from "./creators/files/createESLintConfigFile.js";
 import { CaseData, NamedCaseData, caseEntries, casesPath } from "./data.js";
 import { createProjectName } from "./utils.js";
 import { writeFile } from "./writing/writeFile.js";
 
-async function createCase(data: CaseData): Promise<NamedCaseData> {
-	const name = createProjectName(data);
+async function createCase(data: NamedCaseData): Promise<NamedCaseData> {
+	const name = createProjectName({
+		files: data.files,
+		layout: data.layout,
+		singleRun: data.singleRun,
+		types: data.types,
+	});
 	const directory = path.join(casesPath, name);
 
 	console.log(`Populating ${name}...`);
 
 	await fs.mkdir(path.join(directory, "src"), { recursive: true });
 
-	await writeFile(directory, "eslint.config.js", createESLintConfigFile(data));
-
-	await writeFile(
-		directory,
-		"package.json",
-		{
-			devDependencies: {
-				"@eslint/js": "*",
-				eslint: "*",
-				typescript: "*",
-				"typescript-eslint": "rc-v8",
-			},
-			name,
-			private: true,
-			scripts: {
-				lint: "eslint src",
-			},
-			type: "module",
-		},
-		"json",
-	);
-
-	await writeFile(
-		directory,
-		"tsconfig.json",
-		{
-			compilerOptions: {
-				module: "NodeNext",
-				noEmit: true,
-				skipLibCheck: true,
-				strict: true,
-				target: "ESNext",
-			},
-			include: ["src"],
-		},
-		"json",
-	);
+	await writeFile(directory, "package.json", createPackageFile(data), "json");
 
 	console.log("Created", await writeCaseFiles(data, directory), "files");
 
@@ -71,10 +42,10 @@ const cases: NamedCaseData[] = [];
 
 for (const files of caseEntries[0].values) {
 	for (const layout of caseEntries[1].values) {
-		for (const singleRun of caseEntries[2].values) {
-			for (const types of caseEntries[3].values) {
-				cases.push(await createCase({ files, layout, singleRun, types }));
-			}
+		for (const types of caseEntries[3].values) {
+			const data: CaseData = { files, layout, singleRun: true, types };
+			const name = createProjectName(data);
+			cases.push(await createCase({ ...data, name }));
 		}
 	}
 }

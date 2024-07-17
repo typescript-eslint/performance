@@ -3,16 +3,16 @@ export const casesPath = "cases";
 export const caseEntries = [
 	{
 		label: "files",
-		// values: [1, 32, 64, 128, 256, 512, 1024],
-		values: [512, 1024],
+		values: [128, 512, 1024],
 	},
 	{
 		label: "layout",
-		values: ["even" /* , "projects" , "wide" */],
+		// values: ["even" /* , "references" , "wide" */],
+		values: ["even", "references" /* , "wide" */],
 	},
 	{
 		label: "singleRun",
-		values: [false, true],
+		values: [/* false, */ true],
 	},
 	{
 		label: "types",
