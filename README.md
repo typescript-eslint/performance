@@ -58,6 +58,27 @@ See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.project
 - Example measurements taken on an M1 Max Mac Studio with Node.js 22.4.1
 - These results are similar across TypeScript versions: 5.0.4, 5.4.5, and 5.5.3
 
+### Tracing Measurements
+
+See example `traces/Project 1 - Service 2.cpuprofile`.
+It was generated with:
+
+```shell
+cd cases/files-1024-layout-even-singlerun-true-types-project
+node --inspect-brk ../../node_modules/eslint/bin/eslint.js
+cd ../files-1024-layout-even-singlerun-true-types-service
+node --inspect-brk ../../node_modules/eslint/bin/eslint.js
+```
+
+Comparing equivalent code paths:
+
+| Code Path         | Project | Service |
+| ----------------- | ------- | ------- |
+| All `verifyText`s | 2040ms  | 2859ms  |
+| `parseForESLint`  | 993ms   | 1090ms  |
+
+You might consider using [0x](https://github.com/davidmarkclements/0x) for nice flamegraph visuals.
+
 ## Contributors
 
 <!-- spellchecker: disable -->
