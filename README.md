@@ -51,6 +51,11 @@ This is a performance issue and we are investigating it as a critical bug for v8
 ┴───────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┘
 ```
 
+## Notes
+
+- Example measurements taken on an M1 Max Mac Studio with Node.js 22.4.1
+- These issues occur with TypeScript 5.4.5 and 5.5.3
+
 ## Contributors
 
 <!-- spellchecker: disable -->
