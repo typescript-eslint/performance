@@ -53,14 +53,27 @@ This is a performance issue and we are investigating it as a critical bug for v8
 
 See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.projectService no longer outperforms parserOptions.project](https://github.com/typescript-eslint/typescript-eslint/issues/9571)
 
-## Notes
+### Result Measurement Notes
 
 - Example measurements taken on an M1 Max Mac Studio with Node.js 22.4.1
 - These results are similar across TypeScript versions: 5.0.4, 5.4.5, and 5.5.3
 
-### Tracing Measurements
+## Traces
 
-See example `traces/Project 1 - Service 2.cpuprofile`.
+The `traces/` directory contains more specific traces for investigations.
+
+> ✨ You might consider using [0x](https://github.com/davidmarkclements/0x) for nice flamegraph visuals.
+
+### Comparison: Project and Project Service
+
+This is a preliminary trace to start debugging.
+It was run a common shape of linting: 1024 files with the "even" (triangle-shaped) imports layout.
+
+See `traces/Project 1 - Service 2.cpuprofile`.
+
+- Trace #1: `parserOptions.project`
+- Trace #2: `parserOptions.projectService`
+
 It was generated with:
 
 ```shell
@@ -77,7 +90,31 @@ Comparing equivalent code paths:
 | All `verifyText`s | 2040ms  | 2859ms  |
 | `parseForESLint`  | 993ms   | 1090ms  |
 
-You might consider using [0x](https://github.com/davidmarkclements/0x) for nice flamegraph visuals.
+### Comparison: Project Service Client File Cleanups
+
+This trace shows the cost of the TypeScript project service calling `cleanupProjectsAndScriptInfos`.
+It also was run a common shape of linting: 1024 files with the "even" (triangle-shaped) imports layout.
+
+See `traces/service-file-cleanup/`:
+
+- `baseline.cpuprofile`: Baseline measurement with no changes
+- `skipping.cpuprofile`: Commenting out the contents of TypeScript's `cleanupProjectsAndScriptInfos`
+
+They were generated with:
+
+```shell
+cd files-1024-layout-even-singlerun-true-types-service
+node --cpu-prof --cpu-prof-interval=100 --cpu-prof-name=baseline.cpuprofile ../../node_modules/eslint/bin/eslint.js
+# clear ../../node_modules/typescript/lib/js > cleanupProjectsAndScriptInfos
+node --cpu-prof --cpu-prof-interval=100 --cpu-prof-name=skipping.cpuprofile ../../node_modules/eslint/bin/eslint.js
+```
+
+Hyperfine measurements show a ~15-20% improvement in lint time:
+
+| Variant  | Measurement       | User Time |
+| -------- | ----------------- | --------- |
+| Baseline | 3.215 s ± 0.041 s | 4.483 s   |
+| Skipping | 2.501 s ± 0.017 s | 3.758 s   |
 
 ## Contributors
 
