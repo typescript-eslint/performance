@@ -12,7 +12,7 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
 	{
-		ignores: ["cases", "node_modules", "projects", "yarn.yaml", ".yarn"],
+		ignores: ["cases", "node_modules", "projects"],
 	},
 	{
 		linterOptions: {
@@ -38,7 +38,7 @@ export default tseslint.config(
 		files: ["**/*.js", "**/*.ts"],
 		languageOptions: {
 			parserOptions: {
-				EXPERIMENTAL_useProjectService: {
+				projectService: {
 					allowDefaultProjectForFiles: ["./*.*s", "eslint.config.js"],
 					defaultProject: "./tsconfig.json",
 				},

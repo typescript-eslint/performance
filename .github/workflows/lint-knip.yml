@@ -4,7 +4,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/prepare
-      - run: yarn lint:knip
+      - run: npm run lint:knip
 
 name: Lint Knip
 

@@ -67,13 +67,15 @@
 		"sentences-per-line": "^0.2.1",
 		"tsx": "^4.16.2",
 		"typescript": "^5.5.3",
-		"typescript-eslint": "^7.16.0"
+		"typescript-eslint": "8.0.0-alpha.44"
 	},
-	"packageManager": "yarn@3.8.2",
 	"engines": {
 		"node": ">=22"
 	},
 	"publishConfig": {
 		"provenance": true
+	},
+	"overrides": {
+		"@typescript-eslint/utils": "8.0.0-alpha.44"
 	}
 }

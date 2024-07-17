@@ -16,9 +16,9 @@
 ## Usage
 
 ```shell
-yarn
-yarn generate
-yarn measure
+npm install
+npm generate
+npm measure
 ```
 
 ## Contributors

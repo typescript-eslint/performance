@@ -81,6 +81,6 @@ for (const files of caseEntries[0].values) {
 	}
 }
 
-await execa({ stdio: "inherit" })`yarn`;
+await execa({ stdio: "inherit" })`npm install`;
 
 console.log("Seeded cases.");

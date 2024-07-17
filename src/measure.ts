@@ -14,7 +14,7 @@ async function runProjectLint(data: CaseData) {
 		cwd: path.join(casesPath, projectName),
 		reject: false,
 	})(`hyperfine`, [
-		"yarn lint",
+		"npm run lint",
 		"--ignore-failure",
 		"--show-output",
 		"--warmup",
@@ -23,10 +23,11 @@ async function runProjectLint(data: CaseData) {
 
 	if (result.exitCode) {
 		console.log(result.stderr);
+		console.log({ result });
 	}
 
 	return (
-		result.stdout.match(/[0-9.]+\s+\S+\s+±\s+[0-9.]+\s+\S+/)?.[0] ??
+		/[0-9.]+\s+\S+\s+±\s+[0-9.]+\s+\S+/.exec(result.stdout)?.[0] ??
 		result.stdout
 	);
 }
