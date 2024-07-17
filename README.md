@@ -92,6 +92,8 @@ Comparing equivalent code paths:
 
 ### Comparison: Project Service Client File Cleanups
 
+> 📌 Filed on TypeScript as [⚡ Performance: Project service spends excess time cleaning client files when called synchronously](https://github.com/microsoft/TypeScript/issues/59335).
+
 This trace shows the cost of the TypeScript project service calling `cleanupProjectsAndScriptInfos`.
 It also was run a common shape of linting: 1024 files with the "even" (triangle-shaped) imports layout.
 
