@@ -2,9 +2,8 @@ import { execa } from "execa";
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { writeCaseFiles } from "./creators/writeCaseFiles.js";
 import { createPackageFile } from "./creators/files/createPackageFile.js";
-import { createESLintConfigFile } from "./creators/files/createESLintConfigFile.js";
+import { writeCaseFiles } from "./creators/writeCaseFiles.js";
 import { CaseData, NamedCaseData, caseEntries, casesPath } from "./data.js";
 import { createProjectName } from "./utils.js";
 import { writeFile } from "./writing/writeFile.js";

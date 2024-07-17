@@ -1,6 +1,6 @@
 export interface ESLintConfigFileOptions {
 	singleRun: boolean;
-	types: "tsconfig.eslint.json" | "projectService" | true;
+	types: "projectService" | "tsconfig.eslint.json" | true;
 }
 
 export function createESLintConfigFile({
