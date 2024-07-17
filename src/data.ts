@@ -26,8 +26,6 @@ export type CaseData = {
 	[K in CaseEntry["label"]]: ({ label: K } & CaseEntry)["values"][number];
 };
 
-export type CaseTypes = CaseData["types"];
-
 export interface NamedCaseData extends CaseData {
 	name: string;
 }

@@ -1,7 +1,11 @@
 {
 	"$schema": "https://unpkg.com/knip@latest/schema.json",
-	"entry": ["src/index.ts!"],
+	"entry": ["./src/*.ts"],
+	"ignore": [
+		"src/creators/files/createESLintConfigFile.ts",
+		"src/creators/files/createStandardTSConfigFile.ts",
+		"src/creators/utils.ts"
+	],
 	"ignoreExportsUsedInFile": { "interface": true, "type": true },
-	"ignoreWorkspaces": ["cases/**"],
-	"project": ["src/**/*.ts!"]
+	"ignoreWorkspaces": ["cases/**"]
 }
