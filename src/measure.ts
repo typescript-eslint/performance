@@ -37,14 +37,28 @@ const results: unknown[] = [];
 for (const files of caseEntries[0].values) {
 	results.push({
 		files,
-		"project (even)": await runProjectLint({
+		"project (multi-run)": await runProjectLint({
 			files,
 			layout: "even",
+			singleRun: false,
 			types: "project",
 		}),
-		"service (even)": await runProjectLint({
+		"project (single-run)": await runProjectLint({
 			files,
 			layout: "even",
+			singleRun: true,
+			types: "project",
+		}),
+		"service (multi-run)": await runProjectLint({
+			files,
+			layout: "even",
+			singleRun: false,
+			types: "service",
+		}),
+		"service (single-run)": await runProjectLint({
+			files,
+			layout: "even",
+			singleRun: true,
 			types: "service",
 		}),
 		// "project (wide)": await runProjectLint({

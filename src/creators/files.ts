@@ -4,7 +4,7 @@ import { writeEvenCaseFiles } from "./createEvenCaseFiles.js";
 import { writeProjectsCaseFiles } from "./createProjectsCaseFiles.js";
 import { writeWideCaseFiles } from "./createWideCaseFiles.js";
 
-export function createESLintConfigFile(types: CaseTypes) {
+export function createESLintConfigFile(data: CaseData) {
 	return `
 		import tseslint from "typescript-eslint";
 
@@ -14,7 +14,8 @@ export function createESLintConfigFile(types: CaseTypes) {
 				files: ["**/*.ts"],
 				languageOptions: {
 					parserOptions: {
-						${types === "service" ? "projectService" : "project"}: true,
+						${data.singleRun ? "disallowAutomaticSingleRunInference: true," : ""}
+						${data.types === "service" ? "projectService" : "project"}: true,
 						tsconfigRootDir: import.meta.dirname,
 					},
 				},

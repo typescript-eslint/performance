@@ -15,11 +15,7 @@ async function createCase(data: CaseData): Promise<NamedCaseData> {
 
 	await fs.mkdir(path.join(directory, "src"), { recursive: true });
 
-	await writeFile(
-		directory,
-		"eslint.config.js",
-		createESLintConfigFile(data.types),
-	);
+	await writeFile(directory, "eslint.config.js", createESLintConfigFile(data));
 
 	await writeFile(
 		directory,
@@ -75,8 +71,10 @@ const cases: NamedCaseData[] = [];
 
 for (const files of caseEntries[0].values) {
 	for (const layout of caseEntries[1].values) {
-		for (const types of caseEntries[2].values) {
-			cases.push(await createCase({ files, layout, types }));
+		for (const singleRun of caseEntries[2].values) {
+			for (const types of caseEntries[3].values) {
+				cases.push(await createCase({ files, layout, singleRun, types }));
+			}
 		}
 	}
 }

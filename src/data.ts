@@ -4,11 +4,15 @@ export const caseEntries = [
 	{
 		label: "files",
 		// values: [1, 32, 64, 128, 256, 512, 1024],
-		values: [1, 128, 512, 1024],
+		values: [512, 1024],
 	},
 	{
 		label: "layout",
 		values: ["even" /* , "projects" , "wide" */],
+	},
+	{
+		label: "singleRun",
+		values: [false, true],
 	},
 	{
 		label: "types",
