@@ -1,5 +1,15 @@
 {
 	"dictionaries": ["typescript"],
-	"ignorePaths": [".github", "cases", "node_modules"],
-	"words": ["execa", "knip", "packagejson", "sharkdp", "tseslint", "winget"]
+	"ignorePaths": [".github", "cases", "node_modules", "traces"],
+	"words": [
+		"cpuprofile",
+		"execa",
+		"flamegraph",
+		"knip",
+		"packagejson",
+		"sharkdp",
+		"singlerun",
+		"tseslint",
+		"winget"
+	]
 }
