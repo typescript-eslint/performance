@@ -29,7 +29,8 @@
 		"lint:md": "markdownlint \"**/*.md\" \".github/**/*.md\" --rules sentences-per-line",
 		"lint:spelling": "cspell \"**\" \".github/**/*\"",
 		"measure": "node --import tsx/esm src/measure.ts",
-		"prepare": "husky"
+		"prepare": "husky",
+		"tsc": "tsc"
 	},
 	"lint-staged": {
 		"*": "prettier --ignore-unknown --write"
