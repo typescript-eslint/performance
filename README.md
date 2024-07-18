@@ -229,7 +229,7 @@ index 4baad59..e53476d 100644
 
 </details>
 
-Hyperfine measurements show a ~0.5-2.5% improvement in lint time:
+Hyperfine measurements with `--runs 50` show a ~0.5-2.5% improvement in lint time:
 
 | Variant  | Measurement       | User Time |
 | -------- | ----------------- | --------- |
