@@ -19,7 +19,7 @@ export function createESLintConfigFile({
 				files: ["**/*.ts"],
 				languageOptions: {
 					parserOptions: {
-						${singleRun ? "disallowAutomaticSingleRunInference: true," : ""}
+						${types !== "projectService" && !singleRun ? "disallowAutomaticSingleRunInference: true," : ""}
 						${projectKey}: ${typeof projectValue === "string" ? `"${projectValue}"` : projectValue},
 						tsconfigRootDir: import.meta.dirname,
 					},

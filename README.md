@@ -20,8 +20,8 @@ See [sharkdp/hyperfine#installation](https://github.com/sharkdp/hyperfine#instal
 
 ```shell
 npm install
-npm generate
-npm measure
+npm run generate
+npm run measure
 ```
 
 ### Measured Attributes
@@ -38,20 +38,19 @@ The `caseEntries` values in `src/data.ts` can be modified to test:
 
 ## Results
 
-Right now, `parserOptions.project` outperforms `parserOptions.projectService`.
+Right now, `parserOptions.project` _with_ single-run inference outperforms `parserOptions.projectService`.
 This is a performance issue and we are investigating it as a critical bug for v8.
 
 ```plaintext
-┌───────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┐
-│ files │ project (even)       │ project (references) │ service (even)       │ service (references) │
-┼───────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤
-│ 128   │ '1.149 s ±  0.030 s' │ '1.135 s ±  0.008 s' │ '1.178 s ±  0.010 s' │ '1.736 s ±  0.012 s' │
-│ 512   │ '1.636 s ±  0.009 s' │ '1.656 s ±  0.004 s' │ '1.895 s ±  0.007 s' │ '2.613 s ±  0.020 s' │
-│ 1024  │ '2.353 s ±  0.013 s' │ '2.399 s ±  0.016 s' │ '3.130 s ±  0.017 s' │ '4.034 s ±  0.061 s' │
-┴───────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┘
+┌───────┬───────────────────────┬───────────────────────┐
+│ files │ project (even layout) │ service (even layout) │
+┼───────┼───────────────────────┼───────────────────────┤
+│ 1024  │ '1.750 s ±  0.008 s'  │ '2.473 s ±  0.011 s'  │
+┴───────┴───────────────────────┴───────────────────────┘
 ```
 
-See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.projectService no longer outperforms parserOptions.project](https://github.com/typescript-eslint/typescript-eslint/issues/9571)
+See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.projectService no longer outperforms parserOptions.project](https://github.com/typescript-eslint/typescript-eslint/issues/9571) in typescript-eslint.
+Also see the 📌 pinned issues later in this file.
 
 ### Result Measurement Notes
 

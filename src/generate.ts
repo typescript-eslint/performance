@@ -41,10 +41,12 @@ const cases: NamedCaseData[] = [];
 
 for (const files of caseEntries[0].values) {
 	for (const layout of caseEntries[1].values) {
-		for (const types of caseEntries[3].values) {
-			const data: CaseData = { files, layout, singleRun: true, types };
-			const name = createProjectName(data);
-			cases.push(await createCase({ ...data, name }));
+		for (const singleRun of caseEntries[2].values) {
+			for (const types of caseEntries[3].values) {
+				const data: CaseData = { files, layout, singleRun, types };
+				const name = createProjectName(data);
+				cases.push(await createCase({ ...data, name }));
+			}
 		}
 	}
 }

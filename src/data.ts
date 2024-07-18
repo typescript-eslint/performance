@@ -3,16 +3,15 @@ export const casesPath = "cases";
 export const caseEntries = [
 	{
 		label: "files",
-		values: [128, 512, 1024],
+		values: [1024],
 	},
 	{
 		label: "layout",
-		// values: ["even" /* , "references" , "wide" */],
-		values: ["even", "references" /* , "wide" */],
+		values: ["even"],
 	},
 	{
 		label: "singleRun",
-		values: [/* false, */ true],
+		values: [false],
 	},
 	{
 		label: "types",
@@ -22,9 +21,12 @@ export const caseEntries = [
 
 export type CaseEntry = (typeof caseEntries)[number];
 
-export type CaseData = {
-	[K in CaseEntry["label"]]: ({ label: K } & CaseEntry)["values"][number];
-};
+export interface CaseData {
+	files: number;
+	layout: "even" | "references" | "wide";
+	singleRun: boolean;
+	types: "project" | "service";
+}
 
 export interface NamedCaseData extends CaseData {
 	name: string;
