@@ -173,6 +173,69 @@ Hyperfine measurements show a ~7-12% improvement in lint time:
 | Baseline | 3.112 s ± 0.033 s | 4.382     |
 | Caching  | 2.740 s ± 0.030 s | 4.032     |
 
+### Comparison: Project Service Uncached File System Path Reads
+
+This comparison shows the cost uncached `fs.realpath` calls inside the project service.
+It also was run on a common shape of linting: 1024 files with the "even" (triangle-shaped) imports layout.
+
+See `traces/service-uncached-realpaths/`:
+
+- `baseline.cpuprofile`: Baseline measurement with no changes
+- `caching.cpuprofile`: Adding a caching `Map` to TypeScript's `realpath`
+
+They were generated with:
+
+```shell
+cd files-1024-layout-even-singlerun-true-types-service
+node --cpu-prof --cpu-prof-interval=100 --cpu-prof-name=baseline.cpuprofile ../../node_modules/eslint/bin/eslint.js
+# edit ../../node_modules/typescript/lib/typescript.js > realpath (see diff below)
+node --cpu-prof --cpu-prof-interval=100 --cpu-prof-name=caching.cpuprofile ../../node_modules/eslint/bin/eslint.js
+```
+
+<details>
+<summary><code>diff</code> patch to switch to the <em>Caching</em> variant...</summary>
+
+```diff
+diff --git a/node_modules/typescript/lib/typescript.js b/node_modules/typescript/lib/typescript.js
+index 4baad59..e53476d 100644
+--- a/node_modules/typescript/lib/typescript.js
++++ b/node_modules/typescript/lib/typescript.js
+@@ -13,6 +13,8 @@ See the Apache Version 2.0 License for specific language governing permissions
+ and limitations under the License.
+ ***************************************************************************** */
+
++var realpathCache = new Map();
++
+ var ts = {}; ((module) => {
+ "use strict";
+ var __defProp = Object.defineProperty;
+@@ -8798,6 +8800,15 @@ var sys = (() => {
+       return path.length < 260 ? _fs.realpathSync.native(path) : _fs.realpathSync(path);
+     }
+     function realpath(path) {
++      const cached = realpathCache.get(path);
++      if (cached) {
++        return cached;
++      }
++      const result = realpathWorker(path);
++      realpathCache.set(path, result);
++      return result;
++    }
++    function realpathWorker(path) {
+       try {
+         return fsRealpath(path);
+       } catch {
+```
+
+</details>
+
+Hyperfine measurements show a ~0.5-2.5% improvement in lint time:
+
+| Variant  | Measurement       | User Time |
+| -------- | ----------------- | --------- |
+| Baseline | 3.153 s ± 0.039 s | 4.403 s   |
+| Caching  | 3.073 s ± 0.048 s | 4.377 s   |
+
 ## Contributors
 
 <!-- spellchecker: disable -->
