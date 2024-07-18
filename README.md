@@ -24,6 +24,8 @@ npm run generate
 npm run measure
 ```
 
+You can manually measure individual cases by running `hyperfine ../../node_modules/eslint/bin/eslint.js --ignore-failure --warmup 1`.
+
 ### Measured Attributes
 
 The `caseEntries` values in `src/data.ts` can be modified to test:
