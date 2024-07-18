@@ -120,6 +120,8 @@ Hyperfine measurements show a ~15-20% improvement in lint time:
 
 ### Comparison: Project Service Uncached File System Stats
 
+> 📌 Filed on TypeScript as [⚡ Performance: Project service doesn't cache all fs.statSync](https://github.com/microsoft/TypeScript/issues/59338).
+
 This comparison shows the cost uncached `fs.statSync` calls inside the project service.
 It also was run on a common shape of linting: 1024 files with the "even" (triangle-shaped) imports layout.
 
@@ -174,6 +176,8 @@ Hyperfine measurements show a ~7-12% improvement in lint time:
 | Caching  | 2.740 s ± 0.030 s | 4.032     |
 
 ### Comparison: Project Service Uncached File System Path Reads
+
+> 📌 Filed on TypeScript as [⚡ Performance: Project service doesn't cache all fs.realpath](https://github.com/microsoft/TypeScript/issues/59342).
 
 This comparison shows the cost uncached `fs.realpath` calls inside the project service.
 It also was run on a common shape of linting: 1024 files with the "even" (triangle-shaped) imports layout.
