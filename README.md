@@ -41,7 +41,7 @@ The `caseEntries` values in `src/data.ts` can be modified to test:
 ## Results
 
 Right now, `parserOptions.project` _with_ single-run inference outperforms `parserOptions.projectService`.
-This is a performance issue and we are investigating it as a critical bug for v8.
+This is a performance issue and we are investigating it as a bug.
 
 ```plaintext
 ┌───────┬───────────────────────┬───────────────────────┐
