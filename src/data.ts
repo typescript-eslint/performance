@@ -19,14 +19,14 @@ export const caseEntries = [
 	},
 ] as const;
 
-export type CaseEntry = (typeof caseEntries)[number];
-
 export interface CaseData {
 	files: number;
 	layout: "even" | "references" | "wide";
 	singleRun: boolean;
 	types: "project" | "service";
 }
+
+export type CaseEntry = (typeof caseEntries)[number];
 
 export interface NamedCaseData extends CaseData {
 	name: string;

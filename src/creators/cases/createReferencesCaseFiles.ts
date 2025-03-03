@@ -4,6 +4,56 @@ import { createESLintConfigFile } from "../files/createESLintConfigFile.js";
 import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.js";
 import { range } from "../utils.js";
 
+export function createReferencesCaseFiles(data: CaseData): Structure {
+	const topLevelWidth = Math.ceil(
+		Math.log(data.files) * (data.files > 1000 ? 1.6 : 1.7),
+	);
+	const projectNames = range(0, topLevelWidth).map((i) => `project-${i}`);
+
+	return {
+		"eslint.config.js": [
+			createESLintConfigFile({
+				singleRun: data.singleRun,
+				types:
+					data.types === "service"
+						? "projectService"
+						: data.layout === "references"
+							? "tsconfig.eslint.json"
+							: true,
+			}),
+			"typescript",
+		],
+		"tsconfig.build.json": [
+			{ ...createStandardTSConfigFile(), include: undefined },
+			"json",
+		],
+		...(data.types === "service"
+			? {
+					"tsconfig.json": [
+						{
+							include: [],
+							references: projectNames.map((projectName) => ({
+								path: `./src/${projectName}`,
+							})),
+						},
+						"json",
+					],
+				}
+			: {
+					"tsconfig.eslint.json": [createStandardTSConfigFile(), "json"],
+					"tsconfig.json": [createStandardTSConfigFile(), "json"],
+				}),
+		src: {
+			...Object.fromEntries(
+				projectNames.map((projectName, index) => [
+					projectName,
+					createProjectDirectory(index),
+				]),
+			),
+		},
+	};
+}
+
 function createExampleFile(index: number) {
 	return [
 		index > 2 &&
@@ -71,55 +121,5 @@ function createProjectDirectory(index: number): Structure {
 			},
 			"json",
 		],
-	};
-}
-
-export function createReferencesCaseFiles(data: CaseData): Structure {
-	const topLevelWidth = Math.ceil(
-		Math.log(data.files) * (data.files > 1000 ? 1.6 : 1.7),
-	);
-	const projectNames = range(0, topLevelWidth).map((i) => `project-${i}`);
-
-	return {
-		"eslint.config.js": [
-			createESLintConfigFile({
-				singleRun: data.singleRun,
-				types:
-					data.types === "service"
-						? "projectService"
-						: data.layout === "references"
-							? "tsconfig.eslint.json"
-							: true,
-			}),
-			"typescript",
-		],
-		"tsconfig.build.json": [
-			{ ...createStandardTSConfigFile(), include: undefined },
-			"json",
-		],
-		...(data.types === "service"
-			? {
-					"tsconfig.json": [
-						{
-							include: [],
-							references: projectNames.map((projectName) => ({
-								path: `./src/${projectName}`,
-							})),
-						},
-						"json",
-					],
-				}
-			: {
-					"tsconfig.eslint.json": [createStandardTSConfigFile(), "json"],
-					"tsconfig.json": [createStandardTSConfigFile(), "json"],
-				}),
-		src: {
-			...Object.fromEntries(
-				projectNames.map((projectName, index) => [
-					projectName,
-					createProjectDirectory(index),
-				]),
-			),
-		},
 	};
 }

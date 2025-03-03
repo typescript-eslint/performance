@@ -1,5 +1,6 @@
 {
 	"name": "performance",
+	"version": "0.0.0",
 	"private": true,
 	"description": "Various performance baselines for typescript-eslint.",
 	"repository": {
@@ -36,48 +37,44 @@
 		"*": "prettier --ignore-unknown --write"
 	},
 	"dependencies": {
-		"console-table-without-index": "^0.1.0",
-		"execa": "^9.3.0",
-		"prettier": "^3.3.2"
+		"console-table-without-index": "^0.1.1",
+		"execa": "^9.5.2",
+		"prettier": "^3.5.3"
 	},
 	"devDependencies": {
-		"@eslint-community/eslint-plugin-eslint-comments": "^4.3.0",
-		"@eslint/js": "^9.6.0",
+		"@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
+		"@eslint/js": "^9.21.0",
 		"@types/eslint-plugin-markdown": "^2.0.2",
-		"@types/eslint__js": "^8.42.3",
-		"@types/node": "^20.14.10",
-		"cspell": "^8.10.4",
-		"eslint": "^9.6.0",
-		"eslint-plugin-jsdoc": "^48.7.0",
-		"eslint-plugin-jsonc": "^2.16.0",
-		"eslint-plugin-markdown": "^5.0.0",
-		"eslint-plugin-n": "^17.9.0",
-		"eslint-plugin-package-json": "^0.15.2",
-		"eslint-plugin-perfectionist": "^2.11.0",
-		"eslint-plugin-regexp": "^2.6.0",
-		"eslint-plugin-yml": "^1.14.0",
-		"husky": "^9.0.11",
+		"@types/eslint__js": "^9.14.0",
+		"@types/node": "^22.13.9",
+		"cspell": "^8.17.5",
+		"eslint": "^9.21.0",
+		"eslint-plugin-jsdoc": "^50.6.3",
+		"eslint-plugin-jsonc": "^2.19.1",
+		"eslint-plugin-markdown": "^5.1.0",
+		"eslint-plugin-n": "^17.16.1",
+		"eslint-plugin-package-json": "^0.26.1",
+		"eslint-plugin-perfectionist": "^4.9.0",
+		"eslint-plugin-regexp": "^2.7.0",
+		"eslint-plugin-yml": "^1.17.0",
+		"husky": "^9.1.7",
 		"jsonc-eslint-parser": "^2.4.0",
-		"knip": "^5.25.2",
-		"lint-staged": "^15.2.7",
-		"markdownlint": "^0.34.0",
-		"markdownlint-cli": "^0.41.0",
-		"prettier-plugin-curly": "^0.2.1",
-		"prettier-plugin-packagejson": "^2.5.0",
-		"prettier-plugin-sh": "^0.14.0",
-		"sentences-per-line": "^0.2.1",
-		"tsx": "^4.16.2",
-		"typescript": "5.5.3",
-		"typescript-eslint": "8.0.0-alpha.44"
+		"knip": "^5.45.0",
+		"lint-staged": "^15.4.3",
+		"markdownlint": "^0.37.4",
+		"markdownlint-cli": "^0.44.0",
+		"prettier-plugin-curly": "^0.3.1",
+		"prettier-plugin-packagejson": "^2.5.10",
+		"prettier-plugin-sh": "^0.15.0",
+		"sentences-per-line": "^0.3.0",
+		"tsx": "^4.19.3",
+		"typescript": "5.8.2",
+		"typescript-eslint": "8.26.0"
 	},
 	"engines": {
 		"node": ">=22"
 	},
 	"publishConfig": {
 		"provenance": true
-	},
-	"overrides": {
-		"@typescript-eslint/utils": "8.0.0-alpha.44",
-		"typescript@*": "5.5.3"
 	}
 }

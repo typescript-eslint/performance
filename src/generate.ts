@@ -4,7 +4,7 @@ import path from "node:path";
 
 import { createPackageFile } from "./creators/files/createPackageFile.js";
 import { writeCaseFiles } from "./creators/writeCaseFiles.js";
-import { CaseData, NamedCaseData, caseEntries, casesPath } from "./data.js";
+import { CaseData, caseEntries, casesPath, NamedCaseData } from "./data.js";
 import { createProjectName } from "./utils.js";
 import { writeFile } from "./writing/writeFile.js";
 
