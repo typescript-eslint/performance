@@ -60,12 +60,12 @@ See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.project
 
 ## Comparisons
 
-The `comparisons/` directory contains details on more specific comparisons.
+The [`comparisons/`](./comparisons) directory contains details on more specific comparisons.
 See each `comparisons/*.md` file for details on what's being measured.
 
 ## Traces
 
-The `traces/` directory contains more specific traces for investigations.
+The [`traces/`](./traces) directory contains more specific traces for investigations.
 
 > ✨ You might consider using [0x](https://github.com/davidmarkclements/0x) for nice flamegraph visuals.
 
