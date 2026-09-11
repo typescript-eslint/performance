@@ -2,7 +2,12 @@ import { table } from "console-table-without-index";
 import { execa } from "execa";
 import path from "node:path";
 
-import { CaseData, caseEntries, casesPath } from "./data.js";
+import {
+	CaseData,
+	caseEntries,
+	casesPath,
+	localTypeScriptESLintPath,
+} from "./data.js";
 import { createProjectName } from "./utils.js";
 
 async function runProjectLint(data: CaseData) {
@@ -34,22 +39,25 @@ async function runProjectLint(data: CaseData) {
 
 const results: unknown[] = [];
 
+// The native backend is unpublished, so it can only be measured against a
+// local checkout. Skipping it keeps the published comparison runnable as is.
+const types = localTypeScriptESLintPath
+	? (["project", "service", "native"] as const)
+	: (["project", "service"] as const);
+
 for (const files of caseEntries[0].values) {
-	results.push({
-		files,
-		"project (even layout)": await runProjectLint({
+	const row: Record<string, unknown> = { files };
+
+	for (const type of types) {
+		row[`${type} (even layout)`] = await runProjectLint({
 			files,
 			layout: "even",
 			singleRun: false,
-			types: "project",
-		}),
-		"service (even layout)": await runProjectLint({
-			files,
-			layout: "even",
-			singleRun: false,
-			types: "service",
-		}),
-	});
+			types: type,
+		});
+	}
+
+	results.push(row);
 }
 
 console.table(table(results));

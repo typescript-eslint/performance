@@ -32,6 +32,9 @@ TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run generate
 TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure
 ```
 
+The `native` case relies on that, since the backend is unpublished, so it is skipped without a local checkout.
+See [comparisons/native-backend.md](./comparisons/native-backend.md).
+
 You can manually measure individual cases by running `hyperfine ../../node_modules/eslint/bin/eslint.js --ignore-failure --warmup 1`.
 
 ### Measured Attributes
@@ -44,7 +47,10 @@ The `caseEntries` values in `src/data.ts` can be modified to test:
   - `"references"`: a single root-level `tsconfig.json` with project references to a few projects
   - `"wide"`: one root-level `index.ts` importing from all files in the project
 - `singleRun`: whether to enable [single-run inference](https://v8--typescript-eslint.netlify.app/packages/parser#disallowautomaticsingleruninference) as a performance boost
-- `types`: whether to use `parserOptions.project` or `parserOptions.projectService` for typed linting
+- `types`: how type information is obtained for typed linting:
+  - `"project"`: `parserOptions.project`
+  - `"service"`: `parserOptions.projectService`
+  - `"native"`: `parserOptions.projectService` with the experimental TypeScript 7.1 native backend
 
 ## Results
 

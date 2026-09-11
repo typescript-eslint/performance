@@ -1,14 +1,14 @@
 export interface ESLintConfigFileOptions {
 	singleRun: boolean;
-	types: "projectService" | "tsconfig.eslint.json" | true;
+	types:
+		"nativeProjectService" | "projectService" | "tsconfig.eslint.json" | true;
 }
 
 export function createESLintConfigFile({
 	singleRun,
 	types,
 }: ESLintConfigFileOptions) {
-	const [projectKey, projectValue] =
-		types === "projectService" ? ["projectService", true] : ["project", types];
+	const usesProjectService = types !== true && types !== "tsconfig.eslint.json";
 
 	return `
 		import tseslint from "typescript-eslint";
@@ -19,8 +19,8 @@ export function createESLintConfigFile({
 				files: ["**/*.ts"],
 				languageOptions: {
 					parserOptions: {
-						${types !== "projectService" && !singleRun ? "disallowAutomaticSingleRunInference: true," : ""}
-						${projectKey}: ${typeof projectValue === "string" ? `"${projectValue}"` : projectValue},
+						${!usesProjectService && !singleRun ? "disallowAutomaticSingleRunInference: true," : ""}
+						${createProjectOption(types)},
 						tsconfigRootDir: import.meta.dirname,
 					},
 				},
@@ -30,4 +30,17 @@ export function createESLintConfigFile({
 			},
 		);
 	`;
+}
+
+function createProjectOption(types: ESLintConfigFileOptions["types"]) {
+	switch (types) {
+		case "nativeProjectService":
+			return `projectService: { backend: "native" }`;
+		case "projectService":
+			return `projectService: true`;
+		case true:
+			return `project: true`;
+		default:
+			return `project: "${types}"`;
+	}
 }

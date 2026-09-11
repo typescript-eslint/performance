@@ -4,7 +4,13 @@ import path from "node:path";
 
 import { createPackageFile } from "./creators/files/createPackageFile.js";
 import { writeCaseFiles } from "./creators/writeCaseFiles.js";
-import { CaseData, caseEntries, casesPath, NamedCaseData } from "./data.js";
+import {
+	CaseData,
+	caseEntries,
+	casesPath,
+	localTypeScriptESLintPath,
+	NamedCaseData,
+} from "./data.js";
 import { createProjectName } from "./utils.js";
 import { writeFile } from "./writing/writeFile.js";
 
@@ -43,6 +49,13 @@ for (const files of caseEntries[0].values) {
 	for (const layout of caseEntries[1].values) {
 		for (const singleRun of caseEntries[2].values) {
 			for (const types of caseEntries[3].values) {
+				if (types === "native" && !localTypeScriptESLintPath) {
+					console.log(
+						"Skipping the native case: set TYPESCRIPT_ESLINT_PATH to a local typescript-eslint checkout.",
+					);
+					continue;
+				}
+
 				const data: CaseData = { files, layout, singleRun, types };
 				const name = createProjectName(data);
 				cases.push(await createCase({ ...data, name }));

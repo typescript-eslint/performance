@@ -11,12 +11,7 @@ export function writeEvenCaseFiles(data: CaseData): Structure {
 		"eslint.config.js": [
 			createESLintConfigFile({
 				singleRun: data.singleRun,
-				types:
-					data.types === "service"
-						? "projectService"
-						: data.layout === "references"
-							? "tsconfig.eslint.json"
-							: true,
+				types: eslintConfigTypes(data),
 			}),
 			"typescript",
 		],
@@ -81,4 +76,17 @@ function createIndexFile(count: number) {
 
 		${indices.map((index) => `export { example${index} } from "./example${index}/index.js";`).join("\n\t\t")}
 	`;
+}
+
+function eslintConfigTypes(data: CaseData) {
+	switch (data.types) {
+		case "native":
+			return "nativeProjectService" as const;
+		case "service":
+			return "projectService" as const;
+		default:
+			return data.layout === "references"
+				? ("tsconfig.eslint.json" as const)
+				: (true as const);
+	}
 }

@@ -1,6 +1,10 @@
 import path from "node:path";
 
-import { localTypeScriptESLintPath, NamedCaseData } from "../../data.js";
+import {
+	localTypeScriptESLintPath,
+	NamedCaseData,
+	nativePreviewVersion,
+} from "../../data.js";
 
 export function createPackageFile(data: NamedCaseData) {
 	return {
@@ -8,6 +12,9 @@ export function createPackageFile(data: NamedCaseData) {
 			"@eslint/js": "*",
 			eslint: "*",
 			typescript: "*",
+			...(data.types === "native" && {
+				"@typescript/native": `npm:typescript@${nativePreviewVersion}`,
+			}),
 			"typescript-eslint": localTypeScriptESLintPath
 				? localPackageSpecifier(localTypeScriptESLintPath)
 				: "rc-v8",
