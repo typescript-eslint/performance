@@ -35,36 +35,41 @@ All three cases lint identical source and report the same single `no-floating-pr
 
 ## Results
 
-The native backend is faster on a handful of files and much slower on a project.
+The native backend is now the fastest of the three.
 
 ```plaintext
-┌───────┬───────────────────────┬───────────────────────┬───────────────────────┐
-│ files │ project (even layout) │ service (even layout) │ native (even layout)  │
-├───────┼───────────────────────┼───────────────────────┼───────────────────────┤
-│ 1024  │ '2.202 s ±  0.144 s'  │ '2.499 s ±  0.209 s'  │ '41.695 s ±  1.879 s' │
-└───────┴───────────────────────┴───────────────────────┴───────────────────────┘
+┌───────┬───────────────────────┬───────────────────────┬──────────────────────┐
+│ files │ project (even layout) │ service (even layout) │ native (even layout) │
+├───────┼───────────────────────┼───────────────────────┼──────────────────────┤
+│ 1024  │ '2.075 s ±  0.023 s'  │ '2.387 s ±  0.052 s'  │ '1.779 s ±  0.030 s' │
+└───────┴───────────────────────┴───────────────────────┴──────────────────────┘
 ```
 
-### Where The Time Goes
+It was not always.
+The first run of this comparison measured 41.695 s.
+Investigating that gap found three pieces of per-file work in typescript-eslint that only depended on the project.
+See [typescript-eslint/typescript-eslint#12803](https://github.com/typescript-eslint/typescript-eslint/pull/12803).
 
-Linting subsets of the same generated project separates the fixed cost of getting ready from the marginal cost per file.
-Each measurement is three runs after a warmup, taken with `hyperfine "npx eslint <files>"` inside the case directory.
+### Scaling
 
-| Files linted | `project` | `native` | Ratio |
-| ------------ | --------- | -------- | ----- |
-| 1            | 1.449 s   | 0.848 s  | 0.59  |
-| 8            | 1.465 s   | 1.163 s  | 0.79  |
-| 32           | 1.494 s   | 2.098 s  | 1.40  |
-| 128          | 1.558 s   | 5.829 s  | 3.74  |
-| 1024         | 2.202 s   | 41.695 s | 18.93 |
+Linting subsets of the same generated project separates the fixed cost of
+getting ready from the marginal cost per file.
+Each measurement is three runs after a warmup.
 
-The two backends have opposite shapes.
-`project` pays about 1.4 s up front to build a program and then roughly 0.7 ms for each additional file.
-The native backend starts in about 0.8 s, which beats building a program, but then pays roughly 40 ms for each additional file.
-That is about 54 times the marginal cost, and it puts the crossover somewhere around 20 to 25 files.
+| Files linted | `project` | `native` before | `native` after |
+| ------------ | --------- | --------------- | -------------- |
+| 1            | 1.456 s   | 0.848 s         | 0.843 s        |
+| 8            | 1.459 s   | 1.163 s         | 0.859 s        |
+| 32           | 1.493 s   | 2.098 s         | 0.895 s        |
+| 128          | 1.570 s   | 5.829 s         | 0.992 s        |
+| 1024         | 2.092 s   | 41.695 s        | 1.798 s        |
 
-The likely cause is that every type query is a round trip to the compiler process, so cost tracks the number of checker calls rather than the size of the project.
-That has not been profiled, so treat it as the hypothesis the numbers support rather than a measured conclusion.
+The native backend starts in about 0.84 s, which beats the 1.46 s that building
+a program costs.
+Its marginal cost per file went from about 40 ms to about 0.9 ms, against about
+0.6 ms for `project`.
+So it now leads at every size measured, by the most on small runs where the
+cheaper start up dominates.
 
 ## Measurement Notes
 
@@ -73,7 +78,7 @@ That has not been profiled, so treat it as the hypothesis the numbers support ra
 - The native backend spawns a compiler process per lint run.
   That start up turns out to be cheaper than building a program, so it is not where the time goes.
 - The native backend requires Node.js 22 or newer.
-- `@typescript/native` ships its own `tsc` binary, which npm hoists to the repository root when the native case is generated.
-  The `tsc` script therefore calls TypeScript by path, so that it does not silently run the preview compiler instead.
+- `@typescript/native` ships its own `tsc` binary, which npm hoists over this repository's TypeScript when the native case is generated.
+  `npm run tsc` then runs the preview compiler and reports errors that are not real.
 - `project` and `service` resolve `typescript` from the local checkout, which pins TypeScript 6.
   Measuring against a different TypeScript version means changing that checkout, not this repository.

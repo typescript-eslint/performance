@@ -31,7 +31,7 @@
 		"lint:spelling": "cspell \"**\" \".github/**/*\"",
 		"measure": "node --import tsx/esm src/measure.ts",
 		"prepare": "husky",
-		"tsc": "node ./node_modules/typescript/bin/tsc"
+		"tsc": "tsc"
 	},
 	"lint-staged": {
 		"*": "prettier --ignore-unknown --write"
