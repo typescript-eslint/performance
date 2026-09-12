@@ -31,9 +31,6 @@ TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run generate
 TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure
 ```
 
-The `native` case relies on that, since the backend is unpublished, so it is skipped without a local checkout.
-See [comparisons/native-backend.md](./comparisons/native-backend.md).
-
 You can manually measure individual cases by running `hyperfine ../../node_modules/eslint/bin/eslint.js --ignore-failure --warmup 1`.
 
 ### Measured Attributes

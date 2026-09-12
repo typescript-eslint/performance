@@ -39,8 +39,6 @@ async function runProjectLint(data: CaseData) {
 
 const results: unknown[] = [];
 
-// The native backend is unpublished, so it can only be measured against a
-// local checkout. Skipping it keeps the published comparison runnable as is.
 const types = localTypeScriptESLintPath
 	? (["project", "service", "native"] as const)
 	: (["project", "service"] as const);
