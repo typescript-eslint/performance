@@ -13,11 +13,6 @@
 		"email": "npm@joshuakgoldberg.com"
 	},
 	"type": "module",
-	"files": [
-		"package.json",
-		"LICENSE.md",
-		"README.md"
-	],
 	"workspaces": [
 		"cases/*"
 	],
@@ -42,22 +37,22 @@
 		"prettier": "^3.5.3"
 	},
 	"devDependencies": {
-		"@eslint-community/eslint-plugin-eslint-comments": "^4.5.0",
-		"@eslint/js": "^9.27.0",
+		"@eslint-community/eslint-plugin-eslint-comments": "^4.8.0",
+		"@eslint/js": "^10.0.1",
 		"@types/eslint-plugin-markdown": "^2.0.2",
 		"@types/node": "^22.15.21",
 		"cspell": "^9.0.2",
-		"eslint": "^9.27.0",
-		"eslint-plugin-jsdoc": "^50.6.17",
-		"eslint-plugin-jsonc": "^2.20.1",
+		"eslint": "^10.10.0",
+		"eslint-plugin-jsdoc": "^64.3.9",
+		"eslint-plugin-jsonc": "^3.4.2",
 		"eslint-plugin-markdown": "^5.1.0",
-		"eslint-plugin-n": "^17.18.0",
-		"eslint-plugin-package-json": "^0.31.0",
-		"eslint-plugin-perfectionist": "^4.13.0",
-		"eslint-plugin-regexp": "^2.7.0",
-		"eslint-plugin-yml": "^1.18.0",
+		"eslint-plugin-n": "^18.3.0",
+		"eslint-plugin-package-json": "^1.8.0",
+		"eslint-plugin-perfectionist": "^5.11.0",
+		"eslint-plugin-regexp": "^3.3.0",
+		"eslint-plugin-yml": "^3.8.1",
 		"husky": "^9.1.7",
-		"jsonc-eslint-parser": "^2.4.0",
+		"jsonc-eslint-parser": "^3.3.0",
 		"knip": "^5.57.0",
 		"lint-staged": "^16.0.0",
 		"markdownlint": "^0.38.0",
@@ -71,7 +66,7 @@
 		"typescript-eslint": "8.70.0"
 	},
 	"engines": {
-		"node": ">=22"
+		"node": ">=22.22.2"
 	},
 	"publishConfig": {
 		"provenance": true
