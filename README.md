@@ -24,6 +24,13 @@ npm run generate
 npm run measure
 ```
 
+To measure a local typescript-eslint build rather than the published one, point `TYPESCRIPT_ESLINT_PATH` at the checkout.
+
+```shell
+TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run generate
+TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure
+```
+
 You can manually measure individual cases by running `hyperfine ../../node_modules/eslint/bin/eslint.js --ignore-failure --warmup 1`.
 
 ### Measured Attributes

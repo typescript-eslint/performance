@@ -1,5 +1,8 @@
 export const casesPath = "cases";
 
+export const localTypeScriptESLintPath =
+	process.env.TYPESCRIPT_ESLINT_PATH ?? undefined;
+
 export const caseEntries = [
 	{
 		label: "files",
