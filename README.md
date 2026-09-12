@@ -25,7 +25,6 @@ npm run measure
 ```
 
 To measure a local typescript-eslint build rather than the published one, point `TYPESCRIPT_ESLINT_PATH` at the checkout.
-Every case then depends on that build, so the columns stay comparable.
 
 ```shell
 TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run generate

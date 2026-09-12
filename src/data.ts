@@ -1,11 +1,5 @@
 export const casesPath = "cases";
 
-/**
- * Absolute path to a local typescript-eslint checkout, from
- * `TYPESCRIPT_ESLINT_PATH`. When set, cases depend on that build rather than
- * the published `typescript-eslint`, which is how an unreleased change can be
- * measured against the existing baselines.
- */
 export const localTypeScriptESLintPath =
 	process.env.TYPESCRIPT_ESLINT_PATH ?? undefined;
 
