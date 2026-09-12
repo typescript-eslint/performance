@@ -17,7 +17,7 @@ export function createPackageFile(data: NamedCaseData) {
 			}),
 			"typescript-eslint": localTypeScriptESLintPath
 				? localPackageSpecifier(localTypeScriptESLintPath)
-				: "rc-v8",
+				: "latest",
 		},
 		name: data.name,
 		private: true,
@@ -28,10 +28,6 @@ export function createPackageFile(data: NamedCaseData) {
 	};
 }
 
-/**
- * Cases live two directories below the repository root, so a local checkout is
- * reached from there rather than from the root.
- */
 function localPackageSpecifier(checkout: string) {
 	return `file:${path.relative(
 		path.join("cases", "case"),

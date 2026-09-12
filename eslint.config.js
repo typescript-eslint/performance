@@ -8,10 +8,11 @@ import packageJson from "eslint-plugin-package-json";
 import perfectionist from "eslint-plugin-perfectionist";
 import * as regexp from "eslint-plugin-regexp";
 import yml from "eslint-plugin-yml";
+import { defineConfig, globalIgnores } from "eslint/config";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config(
-	{ ignores: ["cases", "node_modules", "projects"] },
+export default defineConfig(
+	globalIgnores(["cases", "node_modules", "projects"]),
 	{ linterOptions: { reportUnusedDisableDirectives: "error" } },
 	eslint.configs.recommended,
 	comments.recommended,
@@ -35,7 +36,6 @@ export default tseslint.config(
 				projectService: {
 					allowDefaultProject: ["./*.*s", "eslint.config.js"],
 				},
-				tsconfigRootDir: import.meta.dirname,
 			},
 		},
 		rules: {
