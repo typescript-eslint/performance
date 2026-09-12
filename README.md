@@ -43,7 +43,10 @@ The `caseEntries` values in `src/data.ts` can be modified to test:
   - `"references"`: a single root-level `tsconfig.json` with project references to a few projects
   - `"wide"`: one root-level `index.ts` importing from all files in the project
 - `singleRun`: whether to enable [single-run inference](https://v8--typescript-eslint.netlify.app/packages/parser#disallowautomaticsingleruninference) as a performance boost
-- `types`: whether to use `parserOptions.project` or `parserOptions.projectService` for typed linting
+- `types`: how type information is obtained for typed linting:
+  - `"project"`: `parserOptions.project`
+  - `"service"`: `parserOptions.projectService`
+  - `"native"`: `parserOptions.projectService` with the experimental TypeScript 7.1 native backend
 
 ## Results
 

@@ -3,6 +3,9 @@ export const casesPath = "cases";
 export const localTypeScriptESLintPath =
 	process.env.TYPESCRIPT_ESLINT_PATH ?? undefined;
 
+export const nativePreviewVersion =
+	process.env.TYPESCRIPT_NATIVE_VERSION ?? "7.1.0-dev.20260822.1";
+
 export const caseEntries = [
 	{
 		label: "files",
@@ -18,7 +21,7 @@ export const caseEntries = [
 	},
 	{
 		label: "types",
-		values: ["project", "service"],
+		values: ["project", "service", "native"],
 	},
 ] as const;
 
@@ -26,7 +29,7 @@ export interface CaseData {
 	files: number;
 	layout: "even" | "references" | "wide";
 	singleRun: boolean;
-	types: "project" | "service";
+	types: "native" | "project" | "service";
 }
 
 export type CaseEntry = (typeof caseEntries)[number];
