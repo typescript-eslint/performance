@@ -8,6 +8,9 @@ cd performance
 npm install
 ```
 
+> Node.js 24 or newer is required.
+> The scripts in `src/` are run directly by Node.js using its built-in type stripping, with no build step or loader.
+
 > This repository includes a list of suggested VS Code extensions.
 > It's a good idea to use [VS Code](https://code.visualstudio.com) and accept its suggestion to install them, as they'll help with development.
 

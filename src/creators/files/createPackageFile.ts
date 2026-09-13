@@ -2,9 +2,9 @@ import path from "node:path";
 
 import {
 	localTypeScriptESLintPath,
-	NamedCaseData,
+	type NamedCaseData,
 	nativePreviewVersion,
-} from "../../data.js";
+} from "../../data.ts";
 
 export function createPackageFile(data: NamedCaseData) {
 	return {
