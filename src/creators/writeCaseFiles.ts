@@ -1,8 +1,9 @@
-import { CaseData } from "../data.js";
-import { writeStructure } from "../writing/writeStructure.js";
-import { writeEvenCaseFiles } from "./cases/createEvenCaseFiles.js";
-import { createReferencesCaseFiles } from "./cases/createReferencesCaseFiles.js";
-import { writeWideCaseFiles } from "./cases/createWideCaseFiles.js";
+import type { CaseData } from "../data.ts";
+
+import { writeStructure } from "../writing/writeStructure.ts";
+import { writeEvenCaseFiles } from "./cases/createEvenCaseFiles.ts";
+import { createReferencesCaseFiles } from "./cases/createReferencesCaseFiles.ts";
+import { writeWideCaseFiles } from "./cases/createWideCaseFiles.ts";
 
 const caseFileCreators = {
 	even: writeEvenCaseFiles,

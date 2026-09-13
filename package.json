@@ -18,13 +18,13 @@
 	],
 	"scripts": {
 		"format": "prettier .",
-		"generate": "node --import tsx/esm src/generate.ts",
-		"generate:watch": "node --import tsx/esm --watch src/generate.ts",
+		"generate": "node src/generate.ts",
+		"generate:watch": "node --watch src/generate.ts",
 		"lint": "eslint . --max-warnings 0",
 		"lint:knip": "knip",
 		"lint:md": "markdownlint \"**/*.md\" \".github/**/*.md\" --rules sentences-per-line",
 		"lint:spelling": "cspell \"**\" \".github/**/*\"",
-		"measure": "node --import tsx/esm src/measure.ts",
+		"measure": "node src/measure.ts",
 		"prepare": "husky",
 		"tsc": "node ./node_modules/typescript/bin/tsc"
 	},
@@ -60,12 +60,11 @@
 		"prettier-plugin-packagejson": "^2.5.14",
 		"prettier-plugin-sh": "^0.17.4",
 		"sentences-per-line": "^0.3.0",
-		"tsx": "^4.19.4",
 		"typescript": "6.0.3",
 		"typescript-eslint": "8.70.0"
 	},
 	"engines": {
-		"node": ">=22.22.2"
+		"node": ">=24.21.0"
 	},
 	"publishConfig": {
 		"provenance": true

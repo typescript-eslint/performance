@@ -2,11 +2,13 @@ import { execa } from "execa";
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { createPackageFile } from "./creators/files/createPackageFile.js";
-import { writeCaseFiles } from "./creators/writeCaseFiles.js";
-import { CaseData, caseEntries, casesPath, NamedCaseData } from "./data.js";
-import { createProjectName } from "./utils.js";
-import { writeFile } from "./writing/writeFile.js";
+import type { CaseData, NamedCaseData } from "./data.ts";
+
+import { createPackageFile } from "./creators/files/createPackageFile.ts";
+import { writeCaseFiles } from "./creators/writeCaseFiles.ts";
+import { caseEntries, casesPath } from "./data.ts";
+import { createProjectName } from "./utils.ts";
+import { writeFile } from "./writing/writeFile.ts";
 
 async function createCase(data: NamedCaseData): Promise<NamedCaseData> {
 	const name = createProjectName({

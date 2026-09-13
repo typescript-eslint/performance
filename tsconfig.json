@@ -1,7 +1,9 @@
 {
 	"compilerOptions": {
+		"allowImportingTsExtensions": true,
 		"declaration": true,
 		"declarationMap": true,
+		"erasableSyntaxOnly": true,
 		"esModuleInterop": true,
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
@@ -11,7 +13,8 @@
 		"sourceMap": true,
 		"strict": true,
 		"target": "ES2022",
-		"types": ["node"]
+		"types": ["node"],
+		"verbatimModuleSyntax": true
 	},
 	"include": ["src"]
 }

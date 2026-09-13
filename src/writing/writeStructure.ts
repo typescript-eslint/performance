@@ -3,7 +3,7 @@ import type * as prettier from "prettier";
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { writeFile } from "./writeFile.js";
+import { writeFile } from "./writeFile.ts";
 
 export type FileToWrite = [unknown, prettier.BuiltInParserName];
 

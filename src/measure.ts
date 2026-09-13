@@ -3,12 +3,12 @@ import { execa } from "execa";
 import path from "node:path";
 
 import {
-	CaseData,
+	type CaseData,
 	caseEntries,
 	casesPath,
 	localTypeScriptESLintPath,
-} from "./data.js";
-import { createProjectName } from "./utils.js";
+} from "./data.ts";
+import { createProjectName } from "./utils.ts";
 
 async function runProjectLint(data: CaseData) {
 	const projectName = createProjectName(data);

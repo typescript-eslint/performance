@@ -1,7 +1,8 @@
-import { CaseData } from "../../data.js";
-import { Structure } from "../../writing/writeStructure.js";
-import { createESLintConfigFile } from "../files/createESLintConfigFile.js";
-import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.js";
+import type { CaseData } from "../../data.ts";
+import type { Structure } from "../../writing/writeStructure.ts";
+
+import { createESLintConfigFile } from "../files/createESLintConfigFile.ts";
+import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.ts";
 
 export function writeWideCaseFiles(data: CaseData): Structure {
 	return {
