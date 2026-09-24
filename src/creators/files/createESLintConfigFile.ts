@@ -1,10 +1,12 @@
 export interface ESLintConfigFileOptions {
+	rules: "floating" | "recommended";
 	singleRun: boolean;
 	types:
 		"nativeProjectService" | "projectService" | "tsconfig.eslint.json" | true;
 }
 
 export function createESLintConfigFile({
+	rules,
 	singleRun,
 	types,
 }: ESLintConfigFileOptions) {
@@ -14,7 +16,7 @@ export function createESLintConfigFile({
 		import tseslint from "typescript-eslint";
 
 		export default tseslint.config(
-			tseslint.configs.base,
+			tseslint.configs.${rules === "recommended" ? "recommendedTypeChecked" : "base"},
 			{
 				files: ["**/*.ts"],
 				languageOptions: {

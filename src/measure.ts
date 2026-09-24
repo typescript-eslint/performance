@@ -1,17 +1,32 @@
 import { table } from "console-table-without-index";
 import { execa } from "execa";
+import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 
 import {
 	type CaseData,
-	caseEntries,
 	casesPath,
-	localTypeScriptESLintPath,
+	getComparison,
+	getComparisonCases,
 } from "./data.ts";
 import { createProjectName } from "./utils.ts";
 
-async function runProjectLint(data: CaseData) {
+interface Measurement {
+	mean: number;
+	stddev: number;
+}
+
+function formatMeasurement({ mean, stddev }: Measurement) {
+	return `${mean.toFixed(3)} s ± ${stddev.toFixed(3)} s`;
+}
+
+async function runProjectLint(data: CaseData): Promise<Measurement> {
 	const projectName = createProjectName(data);
+	const exportPath = path.join(
+		await fs.mkdtemp(path.join(os.tmpdir(), "performance-")),
+		"results.json",
+	);
 
 	console.log(`Measuring ${projectName}...`);
 
@@ -24,38 +39,58 @@ async function runProjectLint(data: CaseData) {
 		"--show-output",
 		"--warmup",
 		"1",
+		"--export-json",
+		exportPath,
 	]);
 
 	if (result.exitCode) {
 		console.log(result.stderr);
-		console.log({ result });
+		throw new Error(`hyperfine failed for ${projectName}.`);
 	}
 
-	return (
-		/[0-9.]+\s+\S+\s+±\s+[0-9.]+\s+\S+/.exec(result.stdout)?.[0] ??
-		result.stdout
-	);
+	const { results } = JSON.parse(await fs.readFile(exportPath, "utf8")) as {
+		results: Measurement[];
+	};
+
+	return results[0];
 }
 
-const results: unknown[] = [];
+const comparison = getComparison();
+const measurements = new Map<string, Measurement>();
 
-const types = localTypeScriptESLintPath
-	? (["project", "service", "native"] as const)
-	: (["project", "service"] as const);
-
-for (const files of caseEntries[0].values) {
-	const row: Record<string, unknown> = { files };
-
-	for (const type of types) {
-		row[`${type} (even layout)`] = await runProjectLint({
-			files,
-			layout: "even",
-			singleRun: false,
-			types: type,
-		});
-	}
-
-	results.push(row);
+for (const data of getComparisonCases(comparison)) {
+	measurements.set(createProjectName(data), await runProjectLint(data));
 }
 
-console.table(table(results));
+const rows = comparison.files.flatMap((files) =>
+	comparison.rules.map((rules) => {
+		const row: Record<string, unknown> = { files, rules };
+		const means: Partial<Record<CaseData["types"], number>> = {};
+
+		for (const types of comparison.types) {
+			const measurement = measurements.get(
+				createProjectName({
+					files,
+					layout: comparison.layout,
+					rules,
+					singleRun: comparison.singleRun,
+					types,
+				}),
+			);
+			if (measurement) {
+				row[`${types} (${comparison.layout} layout)`] =
+					formatMeasurement(measurement);
+				means[types] = measurement.mean;
+			}
+		}
+
+		if (means.native && means.service) {
+			row["native / service"] = `${(means.native / means.service).toFixed(2)}x`;
+		}
+
+		return row;
+	}),
+);
+
+console.log(`Comparison: ${comparison.description}`);
+console.table(table(rows));

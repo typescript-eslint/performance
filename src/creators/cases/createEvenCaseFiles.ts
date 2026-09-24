@@ -11,6 +11,7 @@ export function writeEvenCaseFiles(data: CaseData): Structure {
 	return {
 		"eslint.config.js": [
 			createESLintConfigFile({
+				rules: data.rules,
 				singleRun: data.singleRun,
 				types: eslintConfigTypes(data),
 			}),

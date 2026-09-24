@@ -14,6 +14,7 @@ export function createReferencesCaseFiles(data: CaseData): Structure {
 	return {
 		"eslint.config.js": [
 			createESLintConfigFile({
+				rules: data.rules,
 				singleRun: data.singleRun,
 				types:
 					data.types === "service"
