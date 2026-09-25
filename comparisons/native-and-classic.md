@@ -13,20 +13,20 @@ TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure:native
 ┌───────┬───────────────┬───────────────────────┬──────────────────────┬──────────────────┐
 │ files │ rules         │ service (even layout) │ native (even layout) │ native / service │
 ├───────┼───────────────┼───────────────────────┼──────────────────────┼──────────────────┤
-│ 128   │ 'floating'    │ '1.014 s ± 0.008 s'   │ '0.879 s ± 0.016 s'  │ '0.87x'          │
-│ 128   │ 'recommended' │ '1.107 s ± 0.015 s'   │ '0.995 s ± 0.010 s'  │ '0.90x'          │
-│ 1024  │ 'floating'    │ '2.713 s ± 0.036 s'   │ '2.458 s ± 0.043 s'  │ '0.91x'          │
-│ 1024  │ 'recommended' │ '3.117 s ± 0.041 s'   │ '3.136 s ± 0.037 s'  │ '1.01x'          │
+│ 128   │ 'floating'    │ '1.003 s ± 0.019 s'   │ '0.877 s ± 0.020 s'  │ '0.87x'          │
+│ 128   │ 'recommended' │ '1.098 s ± 0.015 s'   │ '0.968 s ± 0.009 s'  │ '0.88x'          │
+│ 1024  │ 'floating'    │ '2.640 s ± 0.013 s'   │ '2.390 s ± 0.023 s'  │ '0.91x'          │
+│ 1024  │ 'recommended' │ '3.059 s ± 0.024 s'   │ '2.955 s ± 0.011 s'  │ '0.97x'          │
 └───────┴───────────────┴───────────────────────┴──────────────────────┴──────────────────┘
 ```
 
-The native backend is faster in every case but the largest type-heavy one, where it is at parity.
+The native backend is faster in every case, though least so for the largest type-heavy one.
 Its advantage is a cheaper program; each type query is a round trip to the native process, so a workload that queries types often pays for it.
-Remembering every checker answer for the snapshot, prefetching each file's expression types in one request, and sending changed files with the snapshot instead of through file system callbacks closed a 1.22x gap at 1024 files with `recommendedTypeChecked`.
+Remembering checker answers for the snapshot, prefetching each file's expression types in one request, answering a symbol's type once away from identifiers, and sending changed files with the snapshot instead of through file system callbacks turned a 1.22x gap at 1024 files with `recommendedTypeChecked` into 0.97x.
 
 Both backends reported identical lint results for every case.
 
 ## Result Measurement Notes
 
-- Measured on an Apple Silicon Mac with Node.js 24.15.0
-- typescript-eslint at [typescript-eslint#12803](https://github.com/typescript-eslint/typescript-eslint/pull/12803) commit `f52446aa0`, with TypeScript 6.0.3 (classic) and `typescript@7.1.0-dev.20260923.1` (native)
+- Measured on an Apple Silicon Mac with Node.js 24.15.0, with the machine otherwise idle
+- typescript-eslint at [typescript-eslint#12803](https://github.com/typescript-eslint/typescript-eslint/pull/12803) commit `0859bb016`, with TypeScript 6.0.3 (classic) and `typescript@7.1.0-dev.20260923.1` (native)
