@@ -6,7 +6,7 @@ import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.
 import { range } from "../utils.ts";
 
 export function writeEvenCaseFiles(data: CaseData): Structure {
-	const topLevelWidth = Math.floor(Math.log(data.files) * 1.7);
+	const topLevelWidth = Math.floor(Math.log2(data.files)) + 1;
 
 	return {
 		"eslint.config.js": [
