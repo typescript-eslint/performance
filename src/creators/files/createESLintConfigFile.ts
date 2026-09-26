@@ -37,7 +37,7 @@ export function createESLintConfigFile({
 function createProjectOption(types: ESLintConfigFileOptions["types"]) {
 	switch (types) {
 		case "nativeProjectService":
-			return `projectService: { backend: "native" }`;
+			return `projectService: { EXPERIMENTAL_backend: "native" }`;
 		case "projectService":
 			return `projectService: true`;
 		case true:

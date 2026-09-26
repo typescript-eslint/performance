@@ -1,6 +1,6 @@
 # Comparison: Native and Classic Project Services
 
-This compares the classic `parserOptions.projectService` against the experimental TypeScript 7.1 native backend, `projectService: { backend: "native" }`.
+This compares the classic `parserOptions.projectService` against the experimental TypeScript 7.1 native backend, `projectService: { EXPERIMENTAL_backend: "native" }`.
 
 It was generated with:
 
