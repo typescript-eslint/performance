@@ -19,12 +19,14 @@
 	"scripts": {
 		"format": "prettier .",
 		"generate": "node src/generate.ts",
+		"generate:native": "node src/generate.ts native",
 		"generate:watch": "node --watch src/generate.ts",
 		"lint": "eslint . --max-warnings 0",
 		"lint:knip": "knip",
 		"lint:md": "markdownlint \"**/*.md\" \".github/**/*.md\" --rules sentences-per-line",
 		"lint:spelling": "cspell \"**\" \".github/**/*\"",
 		"measure": "node src/measure.ts",
+		"measure:native": "node src/measure.ts native",
 		"prepare": "husky",
 		"tsc": "node ./node_modules/typescript/bin/tsc"
 	},
