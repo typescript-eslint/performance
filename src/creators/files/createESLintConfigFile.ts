@@ -8,8 +8,6 @@ export function createESLintConfigFile({
 	singleRun,
 	types,
 }: ESLintConfigFileOptions) {
-	const usesProjectService = types !== true && types !== "tsconfig.eslint.json";
-
 	return `
 		import tseslint from "typescript-eslint";
 
@@ -19,7 +17,7 @@ export function createESLintConfigFile({
 				files: ["**/*.ts"],
 				languageOptions: {
 					parserOptions: {
-						${!usesProjectService && !singleRun ? "disallowAutomaticSingleRunInference: true," : ""}
+						${singleRun ? "" : "disallowAutomaticSingleRunInference: true,"}
 						${createProjectOption(types)},
 						tsconfigRootDir: import.meta.dirname,
 					},
