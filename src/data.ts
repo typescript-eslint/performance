@@ -41,7 +41,7 @@ export const comparisons = {
 	native: {
 		description:
 			"the classic project service against the TypeScript 7.1 native backend",
-		files: [128, 1024, 4096],
+		files: [128, 1024, 4096, 8192],
 		layout: "even",
 		rules: ["floating", "recommended"],
 		singleRun: false,
