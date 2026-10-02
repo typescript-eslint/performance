@@ -13,23 +13,23 @@ TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure:native
 ┌───────┬───────────────┬───────────────────────┬──────────────────────┬──────────────────┐
 │ files │ rules         │ service (even layout) │ native (even layout) │ native / service │
 ├───────┼───────────────┼───────────────────────┼──────────────────────┼──────────────────┤
-│ 128   │ 'floating'    │ '1.055 s ± 0.051 s'   │ '0.916 s ± 0.058 s'  │ '0.87x'          │
-│ 128   │ 'recommended' │ '1.168 s ± 0.066 s'   │ '1.006 s ± 0.024 s'  │ '0.86x'          │
-│ 1024  │ 'floating'    │ '2.855 s ± 0.200 s'   │ '2.478 s ± 0.050 s'  │ '0.87x'          │
-│ 1024  │ 'recommended' │ '3.046 s ± 0.025 s'   │ '2.932 s ± 0.034 s'  │ '0.96x'          │
-│ 4096  │ 'floating'    │ '8.411 s ± 0.042 s'   │ '7.833 s ± 0.029 s'  │ '0.93x'          │
-│ 4096  │ 'recommended' │ '9.956 s ± 0.376 s'   │ '10.316 s ± 0.329 s' │ '1.04x'          │
+│ 128   │ 'floating'    │ '0.982 s ± 0.006 s'   │ '0.823 s ± 0.006 s'  │ '0.84x'          │
+│ 128   │ 'recommended' │ '1.068 s ± 0.012 s'   │ '0.921 s ± 0.009 s'  │ '0.86x'          │
+│ 1024  │ 'floating'    │ '2.653 s ± 0.019 s'   │ '2.272 s ± 0.010 s'  │ '0.86x'          │
+│ 1024  │ 'recommended' │ '3.011 s ± 0.016 s'   │ '2.742 s ± 0.013 s'  │ '0.91x'          │
+│ 4096  │ 'floating'    │ '8.377 s ± 0.048 s'   │ '7.194 s ± 0.042 s'  │ '0.86x'          │
+│ 4096  │ 'recommended' │ '9.576 s ± 0.054 s'   │ '8.862 s ± 0.100 s'  │ '0.93x'          │
+│ 8192  │ 'floating'    │ '16.400 s ± 0.035 s'  │ '13.920 s ± 0.085 s' │ '0.85x'          │
+│ 8192  │ 'recommended' │ '18.724 s ± 0.087 s'  │ '17.111 s ± 0.048 s' │ '0.91x'          │
 └───────┴───────────────┴───────────────────────┴──────────────────────┴──────────────────┘
 ```
 
-The native backend is faster in every case except 4096 files with `recommendedTypeChecked`, where the two are about even.
+The native backend is faster in every case: by about 15% with only `no-floating-promises`, and by 7 to 14% with `recommendedTypeChecked`.
 Its advantage is a cheaper program; each type query is a round trip to the native process, so a workload that queries types often pays for it.
-Remembering checker answers for the snapshot, prefetching each file's expression types in one request, answering a symbol's type once away from identifiers, and sending changed files with the snapshot instead of through file system callbacks turned a 1.22x gap at 1024 files with `recommendedTypeChecked` into 0.96x.
-Classic got faster at 4096 files since the previous measurement, from [typescript-eslint#12934](https://github.com/typescript-eslint/typescript-eslint/pull/12934) throttling its per-open cleanup.
 
 Both backends reported identical lint results for every case.
 
 ## Result Measurement Notes
 
-- Measured on an Apple Silicon Mac with Node.js 24.15.0, with the machine otherwise idle
-- typescript-eslint at [typescript-eslint#12803](https://github.com/typescript-eslint/typescript-eslint/pull/12803) commit `7d5b80850`, with TypeScript 6.0.3 (classic) and `typescript@7.1.0-dev.20261001.1` (native)
+- Measured on an Apple Silicon Mac with Node.js 24.15.0, with no other heavy workloads running
+- typescript-eslint at [typescript-eslint#12803](https://github.com/typescript-eslint/typescript-eslint/pull/12803) commit `6563fe18d`, with TypeScript 6.0.3 (classic) and `typescript@7.1.0-dev.20261001.1` (native)
