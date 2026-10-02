@@ -4,7 +4,7 @@ export const localTypeScriptESLintPath =
 	process.env.TYPESCRIPT_ESLINT_PATH ?? undefined;
 
 export const nativePreviewVersion =
-	process.env.TYPESCRIPT_NATIVE_VERSION ?? "7.1.0-dev.20260923.1";
+	process.env.TYPESCRIPT_NATIVE_VERSION ?? "7.1.0-dev.20261001.1";
 
 export interface CaseData {
 	files: number;
