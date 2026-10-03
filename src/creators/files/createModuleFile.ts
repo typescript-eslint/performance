@@ -1,3 +1,8 @@
+export type ModuleCreator = (
+	index: number,
+	dependencies?: readonly ModuleDependency[],
+) => string;
+
 export interface ModuleDependency {
 	index: number;
 	path: string;
@@ -9,17 +14,36 @@ export const nestedDependencies: readonly ModuleDependency[] = [
 	{ index: 1, path: "./nested2/index.js" },
 ];
 
-export function createModuleFile(
+// Every module exports `example${index}`, resolving to a `Summary${index}` with a `total`,
+// so modules can call their dependencies no matter how complex either one is.
+const moduleCreators: readonly ((
 	index: number,
-	dependencies: readonly ModuleDependency[] = [],
+	dependencies: readonly ModuleDependency[],
+) => string)[] = [
+	createSuperSimpleModule,
+	createSimpleModule,
+	createGenericModule,
+	createResultModule,
+	createComplexModule,
+];
+
+/** Creates modules in a repeating pattern of two of each kind of complexity. */
+export function createModuleCycle(): ModuleCreator {
+	let created = 0;
+
+	return (index, dependencies = []) =>
+		moduleCreators[Math.floor(created++ / 2) % moduleCreators.length](
+			index,
+			dependencies,
+		);
+}
+
+function createComplexModule(
+	index: number,
+	dependencies: readonly ModuleDependency[],
 ) {
 	return `
-		${dependencies
-			.map(
-				(dependency) =>
-					`import { example${dependency.index}, type Summary${dependency.index} } from "${dependency.path}";`,
-			)
-			.join("\n")}
+		${createImports(dependencies)}
 
 		export type Status${index} = "active" | "archived" | "pending";
 
@@ -33,6 +57,12 @@ export function createModuleFile(
 		}
 
 		export type ItemPatch${index} = Partial<Omit<Item${index}, "createdAt" | "id">>;
+
+		export type Getters${index}<T> = {
+			[K in keyof T & string as \`get\${Capitalize<K>}\`]: () => T[K];
+		};
+
+		export type Unwrapped${index}<T> = T extends Promise<infer U> ? U : T;
 
 		export type Result${index}<T> =
 			| { error: Error; ok: false }
@@ -94,12 +124,18 @@ export function createModuleFile(
 			}
 		}
 
+		export function describe${index}(value: Date): string;
+		export function describe${index}(value: number): string;
+		export function describe${index}(value: Date | number): string {
+			return typeof value === "number" ? value.toFixed(2) : value.toISOString();
+		}
+
 		export function createItem${index}(prefix: string, offset: number): Item${index} {
 			return {
 				createdAt: new Date(offset * 1000),
-				id: \`\${prefix}-${index}-\${offset}\`,
+				id: \`\${prefix}-${index}-\${offset.toString()}\`,
 				metadata: offset % 3 === 0 ? { priority: offset, source: prefix } : undefined,
-				name: \`Item \${offset.toString()}\`,
+				name: \`Item \${describe${index}(offset)}\`,
 				status: statuses${index}[offset % statuses${index}.length],
 				tags: offset % 2 === 0 ? ["even", prefix] : ["odd"],
 			};
@@ -136,21 +172,229 @@ export function createModuleFile(
 				throw archived.error;
 			}
 
-			${
-				dependencies.length > 0
-					? `const dependencySummaries: [${dependencies
-							.map((dependency) => `Summary${dependency.index}`)
-							.join(", ")}] = await Promise.all([${dependencies
-							.map((dependency) => `example${dependency.index}(prefix)`)
-							.join(", ")}]);
-			const dependencyTotal = dependencySummaries.reduce((total, summary) => total + summary.total, 0);`
-					: "const dependencyTotal = 0;"
-			}
+			${createDependencyTotal(dependencies)}
 
-			return summarize${index}(
+			const summary: Unwrapped${index}<ReturnType<typeof example${index}>> = summarize${index}(
 				repository.list((item) => item.status !== "pending"),
 				dependencyTotal,
 			);
+			const getters: Pick<Getters${index}<Summary${index}>, "getTotal"> = {
+				getTotal: () => summary.total,
+			};
+
+			return { ...summary, total: getters.getTotal() };
+		}
+	`;
+}
+
+function createDependencyTotal(dependencies: readonly ModuleDependency[]) {
+	return dependencies.length > 0
+		? `const dependencySummaries: [${dependencies
+				.map((dependency) => `Summary${dependency.index}`)
+				.join(", ")}] = await Promise.all([${dependencies
+				.map((dependency) => `example${dependency.index}(prefix)`)
+				.join(", ")}]);
+			const dependencyTotal = dependencySummaries.reduce((total, summary) => total + summary.total, 0);`
+		: "const dependencyTotal = 0;";
+}
+
+function createGenericModule(
+	index: number,
+	dependencies: readonly ModuleDependency[],
+) {
+	return `
+		${createImports(dependencies)}
+
+		export interface Summary${index} {
+			groups: number;
+			total: number;
+		}
+
+		export interface Keyed${index} {
+			readonly key: string;
+		}
+
+		export class Cache${index}<K, V> {
+			readonly #entries = new Map<K, V>();
+
+			get(key: K, create: (key: K) => V): V {
+				const existing = this.#entries.get(key);
+				if (existing !== undefined) {
+					return existing;
+				}
+
+				const created = create(key);
+				this.#entries.set(key, created);
+				return created;
+			}
+		}
+
+		export function groupBy${index}<T, K extends PropertyKey>(
+			items: readonly T[],
+			getKey: (item: T) => K,
+		): Map<K, T[]> {
+			const groups = new Map<K, T[]>();
+			for (const item of items) {
+				const key = getKey(item);
+				const group = groups.get(key);
+				if (group) {
+					group.push(item);
+				} else {
+					groups.set(key, [item]);
+				}
+			}
+
+			return groups;
+		}
+
+		export function pluck${index}<T, K extends keyof T>(items: readonly T[], key: K): T[K][] {
+			return items.map((item) => item[key]);
+		}
+
+		export async function example${index}(prefix: string): Promise<Summary${index}> {
+			${createDependencyTotal(dependencies)}
+			await Promise.resolve();
+
+			const cache = new Cache${index}<string, Keyed${index}[]>();
+			const items = cache.get(prefix, (key) => [
+				{ key: \`\${key}a\` },
+				{ key: \`\${key}bb\` },
+				{ key: \`\${key}a\` },
+			]);
+			const groups = groupBy${index}(pluck${index}(items, "key"), (key) => key.length);
+
+			return { groups: groups.size, total: items.length + dependencyTotal };
+		}
+	`;
+}
+
+function createImports(dependencies: readonly ModuleDependency[]) {
+	return dependencies
+		.map(
+			(dependency) =>
+				`import { example${dependency.index}, type Summary${dependency.index} } from "${dependency.path}";`,
+		)
+		.join("\n");
+}
+
+function createResultModule(
+	index: number,
+	dependencies: readonly ModuleDependency[],
+) {
+	return `
+		${createImports(dependencies)}
+
+		export interface Summary${index} {
+			failures: string[];
+			total: number;
+		}
+
+		export type Result${index}<T> =
+			| { error: string; ok: false }
+			| { ok: true; value: T };
+
+		export type Event${index} =
+			| { amount: number; kind: "deposit" }
+			| { amount: number; kind: "withdrawal" }
+			| { kind: "close"; reason: string };
+
+		export function parseAmount${index}(input: string): Result${index}<number> {
+			const amount = Number(input);
+			return Number.isFinite(amount) && amount >= 0
+				? { ok: true, value: amount }
+				: { error: \`Invalid amount: \${input}\`, ok: false };
+		}
+
+		export function applyEvent${index}(balance: number, event: Event${index}): Result${index}<number> {
+			switch (event.kind) {
+				case "close":
+					return balance === 0
+						? { ok: true, value: 0 }
+						: { error: \`Cannot close: \${event.reason}\`, ok: false };
+				case "deposit":
+					return { ok: true, value: balance + event.amount };
+				case "withdrawal":
+					return event.amount > balance
+						? { error: "Insufficient funds", ok: false }
+						: { ok: true, value: balance - event.amount };
+			}
+		}
+
+		export async function example${index}(prefix: string): Promise<Summary${index}> {
+			${createDependencyTotal(dependencies)}
+			await Promise.resolve();
+
+			const failures: string[] = [];
+			let balance = 0;
+			for (const input of [prefix.length.toString(), "12", "-3"]) {
+				const amount = parseAmount${index}(input);
+				if (!amount.ok) {
+					failures.push(amount.error);
+					continue;
+				}
+
+				const applied = applyEvent${index}(balance, { amount: amount.value, kind: "deposit" });
+				if (applied.ok) {
+					balance = applied.value;
+				} else {
+					failures.push(applied.error);
+				}
+			}
+
+			return { failures, total: balance + dependencyTotal };
+		}
+	`;
+}
+
+function createSimpleModule(
+	index: number,
+	dependencies: readonly ModuleDependency[],
+) {
+	return `
+		${createImports(dependencies)}
+
+		export interface Summary${index} {
+			labels: string[];
+			total: number;
+		}
+
+		interface Entry${index} {
+			count: number;
+			label: string;
+		}
+
+		const entries${index}: Entry${index}[] = [
+			{ count: 1, label: "alpha" },
+			{ count: 2, label: "beta" },
+			{ count: 3, label: "gamma" },
+		];
+
+		export function formatEntry${index}(entry: Entry${index}): string {
+			return \`\${entry.label} (\${entry.count.toString()})\`;
+		}
+
+		export async function example${index}(prefix: string): Promise<Summary${index}> {
+			${createDependencyTotal(dependencies)}
+			await Promise.resolve();
+
+			const labels = entries${index}
+				.filter((entry) => entry.count > 1)
+				.map((entry) => prefix + formatEntry${index}(entry));
+
+			return { labels, total: labels.length + dependencyTotal };
+		}
+	`;
+}
+
+function createSuperSimpleModule(index: number) {
+	return `
+		export interface Summary${index} {
+			total: number;
+		}
+
+		export async function example${index}(prefix: string): Promise<Summary${index}> {
+			await Promise.resolve();
+			return { total: prefix.length + ${index} };
 		}
 	`;
 }

@@ -3,7 +3,8 @@ import type { Structure } from "../../writing/writeStructure.ts";
 
 import { createESLintConfigFile } from "../files/createESLintConfigFile.ts";
 import {
-	createModuleFile,
+	createModuleCycle,
+	type ModuleCreator,
 	nestedDependencies,
 } from "../files/createModuleFile.ts";
 import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.ts";
@@ -14,6 +15,7 @@ export function createReferencesCaseFiles(data: CaseData): Structure {
 		Math.log(data.files) * (data.files > 1000 ? 1.6 : 1.7),
 	);
 	const projectNames = range(0, topLevelWidth).map((i) => `project-${i}`);
+	const createModule = createModuleCycle();
 
 	return {
 		"eslint.config.js": [
@@ -53,20 +55,20 @@ export function createReferencesCaseFiles(data: CaseData): Structure {
 			...Object.fromEntries(
 				projectNames.map((projectName, index) => [
 					projectName,
-					createProjectDirectory(index),
+					createProjectDirectory(index, createModule),
 				]),
 			),
 		},
 	};
 }
 
-function createExampleFile(index: number) {
+function createExampleFile(index: number, createModule: ModuleCreator) {
 	return [
 		index > 2 &&
 			range(1, index)
 				.map((i) => `export * as nested${i} from "./nested${i}/index.js";`)
 				.join("\n\t\t"),
-		createModuleFile(index, index > 2 ? nestedDependencies : []),
+		createModule(index, index > 2 ? nestedDependencies : []),
 	]
 		.filter(Boolean)
 		.join("\n\n");
@@ -90,27 +92,33 @@ function createIndexFile(count: number) {
 	`;
 }
 
-function createNestedDirectory(index: number): Structure {
+function createNestedDirectory(
+	index: number,
+	createModule: ModuleCreator,
+): Structure {
 	return {
-		"index.ts": [createExampleFile(index), "typescript"],
+		"index.ts": [createExampleFile(index, createModule), "typescript"],
 		...(index > 2 &&
 			Object.fromEntries(
 				range(1, index).map((i) => [
 					`nested${i}`,
-					createNestedDirectory(i - 1),
+					createNestedDirectory(i - 1, createModule),
 				]),
 			)),
 	};
 }
 
-function createProjectDirectory(index: number): Structure {
+function createProjectDirectory(
+	index: number,
+	createModule: ModuleCreator,
+): Structure {
 	return {
 		src: {
 			"index.ts": [createIndexFile(index), "typescript"],
 			...Object.fromEntries(
 				range(0, nestedCount(index)).map((i) => [
 					`nested${i}`,
-					createNestedDirectory(i),
+					createNestedDirectory(i, createModule),
 				]),
 			),
 		},
