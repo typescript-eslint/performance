@@ -2,6 +2,7 @@ import type { CaseData } from "../../data.ts";
 import type { Structure } from "../../writing/writeStructure.ts";
 
 import { createESLintConfigFile } from "../files/createESLintConfigFile.ts";
+import { createModuleFile } from "../files/createModuleFile.ts";
 import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.ts";
 
 export function writeWideCaseFiles(data: CaseData): Structure {
@@ -35,12 +36,12 @@ export function writeWideCaseFiles(data: CaseData): Structure {
 }
 
 function createExampleFile(index: number) {
-	return `
-		export async function example${index}(prefix: string) {
-			await Promise.resolve();
-			return prefix + "" + ${index};
-		}
-	`;
+	const parent = Math.floor((index - 1) / 2);
+
+	return createModuleFile(
+		index,
+		index > 0 ? [{ index: parent, path: `./example${parent}.js` }] : [],
+	);
 }
 
 function createIndexFile(count: number) {

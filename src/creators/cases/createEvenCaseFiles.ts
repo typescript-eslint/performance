@@ -2,6 +2,10 @@ import type { CaseData } from "../../data.ts";
 import type { Structure } from "../../writing/writeStructure.ts";
 
 import { createESLintConfigFile } from "../files/createESLintConfigFile.ts";
+import {
+	createModuleFile,
+	nestedDependencies,
+} from "../files/createModuleFile.ts";
 import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.ts";
 import { range } from "../utils.ts";
 
@@ -47,16 +51,11 @@ function createExampleDirectory(index: number): Structure {
 
 function createExampleFile(index: number) {
 	return [
-		index > 1 &&
+		index > 2 &&
 			range(1, index)
 				.map((i) => `export * as nested${i} from "./nested${i}/index.js";`)
 				.join("\n\t\t"),
-		`
-			export async function example${index}(prefix: string) {
-				await Promise.resolve();
-				return prefix + "" + ${index};
-			}
-		`,
+		createModuleFile(index, index > 2 ? nestedDependencies : []),
 	]
 		.filter(Boolean)
 		.join("\n\n");

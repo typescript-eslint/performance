@@ -2,6 +2,10 @@ import type { CaseData } from "../../data.ts";
 import type { Structure } from "../../writing/writeStructure.ts";
 
 import { createESLintConfigFile } from "../files/createESLintConfigFile.ts";
+import {
+	createModuleFile,
+	nestedDependencies,
+} from "../files/createModuleFile.ts";
 import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.ts";
 import { range } from "../utils.ts";
 
@@ -62,19 +66,14 @@ function createExampleFile(index: number) {
 			range(1, index)
 				.map((i) => `export * as nested${i} from "./nested${i}/index.js";`)
 				.join("\n\t\t"),
-		`
-			export async function example${index}(prefix: string) {
-				await Promise.resolve();
-				return prefix + "" + ${index};
-			}
-		`,
+		createModuleFile(index, index > 2 ? nestedDependencies : []),
 	]
 		.filter(Boolean)
 		.join("\n\n");
 }
 
 function createIndexFile(count: number) {
-	const indices = count > 1 ? range(0, count - 1) : [];
+	const indices = range(0, nestedCount(count));
 
 	return `
 		import { example0 } from "./nested0/index.js";
@@ -108,13 +107,12 @@ function createProjectDirectory(index: number): Structure {
 	return {
 		src: {
 			"index.ts": [createIndexFile(index), "typescript"],
-			...(index > 2 &&
-				Object.fromEntries(
-					range(0, index - 1).map((i) => [
-						`nested${i}`,
-						createNestedDirectory(i),
-					]),
-				)),
+			...Object.fromEntries(
+				range(0, nestedCount(index)).map((i) => [
+					`nested${i}`,
+					createNestedDirectory(i),
+				]),
+			),
 		},
 		"tsconfig.json": [
 			{
@@ -124,4 +122,9 @@ function createProjectDirectory(index: number): Structure {
 			"json",
 		],
 	};
+}
+
+// Every project's index file imports from nested0, so each has at least one.
+function nestedCount(index: number) {
+	return Math.max(index - 1, 1);
 }
