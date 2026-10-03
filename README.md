@@ -68,14 +68,13 @@ Each comparison in `src/data.ts` can be modified to test:
 
 ## Results
 
-Right now, `parserOptions.project` with single-run inference outperforms `parserOptions.projectService`.
-This is a performance issue and we are investigating it as a bug.
+Right now, `parserOptions.projectService` performs about the same as `parserOptions.project`, rather than outperforming it.
 
 ```plaintext
 ┌───────┬───────────────────────┬───────────────────────┐
 │ files │ project (even layout) │ service (even layout) │
 ├───────┼───────────────────────┼───────────────────────┤
-│ 1024  │ '2.371 s ±  0.029 s'  │ '2.724 s ±  0.049 s'  │
+│ 1024  │ '4.520 s ±  0.123 s'  │ '4.464 s ±  0.019 s'  │
 └───────┴───────────────────────┴───────────────────────┘
 ```
 
@@ -83,8 +82,8 @@ See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.project
 
 ### Result Measurement Notes
 
-- Example measurements taken on an M1 Max Mac Studio with Node.js 22.12.0
-- These results are similar across TypeScript versions: 5.0.4, 5.4.5, and 5.5.3
+- Example measurements taken on an M1 Max Mac Studio with Node.js 24.15.0
+- These results were measured with typescript-eslint 8.70–8.71 and TypeScript 6.0
 
 ## Comparisons
 
