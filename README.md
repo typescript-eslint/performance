@@ -52,6 +52,7 @@ You can manually measure individual cases by running `hyperfine ../../node_modul
 Each comparison in `src/data.ts` can be modified to test:
 
 - `files`: roughly how many generated files should be linted
+  - Files repeat a pattern of two each: super simple, relatively simple, using generics, using result unions, and using all of those plus fancier types
 - `layout`: what rough shape of imports those files exhibit:
   - `"even"`: a single root-level `index.ts` importing from roughly an even triangle shape of files
   - `"references"`: a single root-level `tsconfig.json` with project references to a few projects

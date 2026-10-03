@@ -2,9 +2,15 @@ import type { CaseData } from "../../data.ts";
 import type { Structure } from "../../writing/writeStructure.ts";
 
 import { createESLintConfigFile } from "../files/createESLintConfigFile.ts";
+import {
+	createModuleCycle,
+	type ModuleCreator,
+} from "../files/createModuleFile.ts";
 import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.ts";
 
 export function writeWideCaseFiles(data: CaseData): Structure {
+	const createModule = createModuleCycle();
+
 	return {
 		"eslint.config.js": [
 			createESLintConfigFile({
@@ -26,7 +32,7 @@ export function writeWideCaseFiles(data: CaseData): Structure {
 					.fill(undefined)
 					.map((_, index) => [
 						`example${index}.ts`,
-						[createExampleFile(index), "typescript"],
+						[createExampleFile(index, createModule), "typescript"],
 					]),
 			),
 		},
@@ -34,13 +40,13 @@ export function writeWideCaseFiles(data: CaseData): Structure {
 	};
 }
 
-function createExampleFile(index: number) {
-	return `
-		export async function example${index}(prefix: string) {
-			await Promise.resolve();
-			return prefix + "" + ${index};
-		}
-	`;
+function createExampleFile(index: number, createModule: ModuleCreator) {
+	const parent = Math.floor((index - 1) / 2);
+
+	return createModule(
+		index,
+		index > 0 ? [{ index: parent, path: `./example${parent}.js` }] : [],
+	);
 }
 
 function createIndexFile(count: number) {

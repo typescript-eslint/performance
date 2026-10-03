@@ -2,11 +2,17 @@ import type { CaseData } from "../../data.ts";
 import type { Structure } from "../../writing/writeStructure.ts";
 
 import { createESLintConfigFile } from "../files/createESLintConfigFile.ts";
+import {
+	createModuleCycle,
+	type ModuleCreator,
+	nestedDependencies,
+} from "../files/createModuleFile.ts";
 import { createStandardTSConfigFile } from "../files/createStandardTSConfigFile.ts";
 import { range } from "../utils.ts";
 
 export function writeEvenCaseFiles(data: CaseData): Structure {
 	const topLevelWidth = Math.floor(Math.log2(data.files)) + 1;
+	const createModule = createModuleCycle();
 
 	return {
 		"eslint.config.js": [
@@ -24,7 +30,7 @@ export function writeEvenCaseFiles(data: CaseData): Structure {
 					.fill(undefined)
 					.map((_, index) => [
 						`example${index}`,
-						createExampleDirectory(index),
+						createExampleDirectory(index, createModule),
 					]),
 			),
 		},
@@ -32,31 +38,29 @@ export function writeEvenCaseFiles(data: CaseData): Structure {
 	};
 }
 
-function createExampleDirectory(index: number): Structure {
+function createExampleDirectory(
+	index: number,
+	createModule: ModuleCreator,
+): Structure {
 	return {
-		"index.ts": [createExampleFile(index), "typescript"],
+		"index.ts": [createExampleFile(index, createModule), "typescript"],
 		...(index > 2 &&
 			Object.fromEntries(
 				range(1, index).map((i) => [
 					`nested${i}`,
-					createExampleDirectory(i - 1),
+					createExampleDirectory(i - 1, createModule),
 				]),
 			)),
 	};
 }
 
-function createExampleFile(index: number) {
+function createExampleFile(index: number, createModule: ModuleCreator) {
 	return [
-		index > 1 &&
+		index > 2 &&
 			range(1, index)
 				.map((i) => `export * as nested${i} from "./nested${i}/index.js";`)
 				.join("\n\t\t"),
-		`
-			export async function example${index}(prefix: string) {
-				await Promise.resolve();
-				return prefix + "" + ${index};
-			}
-		`,
+		createModule(index, index > 2 ? nestedDependencies : []),
 	]
 		.filter(Boolean)
 		.join("\n\n");
