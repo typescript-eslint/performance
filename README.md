@@ -31,17 +31,34 @@ TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run generate
 TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure
 ```
 
+### Comparison Types
+
+`generate` and `measure` take an optional comparison type, defined in `comparisons` in `src/data.ts`:
+
+- `default`: `parserOptions.project` against `parserOptions.projectService`, plus the native backend when `TYPESCRIPT_ESLINT_PATH` is set
+- `native`: the classic project service against the TypeScript 7.1 native backend, across file counts and rule sets
+
+```shell
+TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run generate:native
+TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure:native
+```
+
+The native backend is unpublished, so the `native` comparison requires `TYPESCRIPT_ESLINT_PATH`.
+
 You can manually measure individual cases by running `hyperfine ../../node_modules/eslint/bin/eslint.js --ignore-failure --warmup 1`.
 
 ### Measured Attributes
 
-The `caseEntries` values in `src/data.ts` can be modified to test:
+Each comparison in `src/data.ts` can be modified to test:
 
 - `files`: roughly how many generated files should be linted
 - `layout`: what rough shape of imports those files exhibit:
   - `"even"`: a single root-level `index.ts` importing from roughly an even triangle shape of files
   - `"references"`: a single root-level `tsconfig.json` with project references to a few projects
   - `"wide"`: one root-level `index.ts` importing from all files in the project
+- `rules`: which rules are enabled:
+  - `"floating"`: only `@typescript-eslint/no-floating-promises`
+  - `"recommended"`: `recommendedTypeChecked`, which queries type information far more often
 - `singleRun`: whether to enable [single-run inference](https://v8--typescript-eslint.netlify.app/packages/parser#disallowautomaticsingleruninference) as a performance boost
 - `types`: how type information is obtained for typed linting:
   - `"project"`: `parserOptions.project`
