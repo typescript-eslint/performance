@@ -54,6 +54,7 @@ Each comparison in `src/data.ts` can be modified to test:
 - `files`: roughly how many generated files should be linted
   - Like typical app code, 85% of files only use plain types: their own and those of a shared, generated `@app/framework` module with a large discriminated union
   - 10% of files declare generics, and 5% declare result unions or fancier types such as mapped and conditional types
+  - Like real code, file sizes skew right: files average about 100 lines, with a median of about 65 and a tenth of files over about 240
 - `layout`: what rough shape of imports those files exhibit:
   - `"even"`: a single root-level `index.ts` importing from roughly an even triangle shape of files
   - `"references"`: a single root-level `tsconfig.json` with project references to a few projects
@@ -75,7 +76,7 @@ Right now, `parserOptions.projectService` performs about the same as `parserOpti
 ┌───────┬───────────────────────┬───────────────────────┐
 │ files │ project (even layout) │ service (even layout) │
 ├───────┼───────────────────────┼───────────────────────┤
-│ 1024  │ '3.859 s ±  0.024 s'  │ '3.968 s ±  0.039 s'  │
+│ 1024  │ '5.161 s ±  0.061 s'  │ '5.334 s ±  0.059 s'  │
 └───────┴───────────────────────┴───────────────────────┘
 ```
 
