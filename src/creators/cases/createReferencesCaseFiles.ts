@@ -2,6 +2,7 @@ import type { CaseData } from "../../data.ts";
 import type { Structure } from "../../writing/writeStructure.ts";
 
 import { createESLintConfigFile } from "../files/createESLintConfigFile.ts";
+import { createFrameworkFile } from "../files/createFrameworkFile.ts";
 import {
 	createModuleCycle,
 	type ModuleCreator,
@@ -58,6 +59,9 @@ export function createReferencesCaseFiles(data: CaseData): Structure {
 					createProjectDirectory(index, createModule),
 				]),
 			),
+		},
+		types: {
+			"framework.d.ts": [createFrameworkFile(), "typescript"],
 		},
 	};
 }
@@ -125,7 +129,7 @@ function createProjectDirectory(
 		"tsconfig.json": [
 			{
 				extends: "../../tsconfig.build.json",
-				include: ["src"],
+				include: ["src", "../../types"],
 			},
 			"json",
 		],

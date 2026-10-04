@@ -2,6 +2,7 @@ import type { CaseData } from "../../data.ts";
 import type { Structure } from "../../writing/writeStructure.ts";
 
 import { createESLintConfigFile } from "../files/createESLintConfigFile.ts";
+import { createFrameworkFile } from "../files/createFrameworkFile.ts";
 import {
 	createModuleCycle,
 	type ModuleCreator,
@@ -35,6 +36,9 @@ export function writeEvenCaseFiles(data: CaseData): Structure {
 			),
 		},
 		"tsconfig.json": [createStandardTSConfigFile(), "json"],
+		types: {
+			"framework.d.ts": [createFrameworkFile(), "typescript"],
+		},
 	};
 }
 

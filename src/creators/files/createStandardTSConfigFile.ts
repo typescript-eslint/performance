@@ -7,6 +7,6 @@ export function createStandardTSConfigFile() {
 			strict: true,
 			target: "ESNext",
 		},
-		include: ["src"],
+		include: ["src", "types"],
 	};
 }

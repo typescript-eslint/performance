@@ -1,3 +1,5 @@
+import { entitySchemas } from "./createFrameworkFile.ts";
+
 export type ModuleCreator = (
 	index: number,
 	dependencies?: readonly ModuleDependency[],
@@ -16,26 +18,37 @@ export const nestedDependencies: readonly ModuleDependency[] = [
 
 // Every module exports `example${index}`, resolving to a `Summary${index}` with a `total`,
 // so modules can call their dependencies no matter how complex either one is.
-const moduleCreators: readonly ((
+type ModuleKindCreator = (
 	index: number,
 	dependencies: readonly ModuleDependency[],
-) => string)[] = [
-	createSuperSimpleModule,
-	createSimpleModule,
-	createGenericModule,
-	createResultModule,
-	createComplexModule,
-];
+) => string;
 
-/** Creates modules in a repeating pattern of two of each kind of complexity. */
+// Like typical app code, 85% of modules only use plain types of their own (and the
+// framework's), 10% declare generics, and 5% declare result unions or fancier types.
+const advancedModules = new Map<number, ModuleKindCreator>([
+	[3, createGenericModule],
+	[8, createResultModule],
+	[13, createGenericModule],
+	[23, createGenericModule],
+	[28, createComplexModule],
+	[33, createGenericModule],
+]);
+
+const modulePattern: readonly ModuleKindCreator[] = Array.from(
+	{ length: 40 },
+	(_, position) =>
+		advancedModules.get(position) ??
+		(position % 5 === 0 || position % 5 === 2
+			? createSuperSimpleModule
+			: createSimpleModule),
+);
+
+/** Creates modules in a repeating pattern of mostly plain modules, with a few advanced ones. */
 export function createModuleCycle(): ModuleCreator {
 	let created = 0;
 
 	return (index, dependencies = []) =>
-		moduleCreators[Math.floor(created++ / 2) % moduleCreators.length](
-			index,
-			dependencies,
-		);
+		modulePattern[created++ % modulePattern.length](index, dependencies);
 }
 
 function createComplexModule(
@@ -350,36 +363,54 @@ function createSimpleModule(
 	index: number,
 	dependencies: readonly ModuleDependency[],
 ) {
+	const [first, second, third] = [0, 1, 2].map(
+		(offset) => entitySchemas[(index * 3 + offset) % entitySchemas.length],
+	);
+
 	return `
 		${createImports(dependencies)}
+		import { defineHandlers, type Entity, findEntities, isKind, load } from "@app/framework";
 
 		export interface Summary${index} {
 			labels: string[];
 			total: number;
 		}
 
-		interface Entry${index} {
-			count: number;
-			label: string;
-		}
+		export const handlers${index} = defineHandlers({
+			${first.kind}(entity, context) {
+				if (entity.${first.count} < 0) {
+					context.report("${first.kind} has a negative ${first.count}", entity);
+				}
+			},
+			${second.kind}(entity, context) {
+				if (entity.status === "archived" && !entity.${second.flag}) {
+					context.report(\`\${entity.name} is archived\`, entity);
+				}
+			},
+			async ${third.kind}(entity, context) {
+				const owner = entity.owner && (await load(entity.owner.id));
+				if (!owner) {
+					context.report(\`\${entity.${third.label}} has no owner\`, entity);
+				}
+			},
+		});
 
-		const entries${index}: Entry${index}[] = [
-			{ count: 1, label: "alpha" },
-			{ count: 2, label: "beta" },
-			{ count: 3, label: "gamma" },
-		];
-
-		export function formatEntry${index}(entry: Entry${index}): string {
-			return \`\${entry.label} (\${entry.count.toString()})\`;
+		function describe${index}(entity: Entity): string {
+			if (isKind(entity, "${first.kind}")) {
+				return \`\${entity.name}: \${entity.${first.count}.toString()}\`;
+			}
+			if (isKind(entity, "${second.kind}")) {
+				return entity.${second.flag} ? entity.name : entity.status;
+			}
+			return entity.tags.join(", ");
 		}
 
 		export async function example${index}(prefix: string): Promise<Summary${index}> {
 			${createDependencyTotal(dependencies)}
-			await Promise.resolve();
-
-			const labels = entries${index}
-				.filter((entry) => entry.count > 1)
-				.map((entry) => prefix + formatEntry${index}(entry));
+			const entities = await findEntities("${first.kind}", (entity) => entity.name.startsWith(prefix));
+			const labels = entities
+				.filter((entity) => entity.${first.count} > 0)
+				.map((entity) => describe${index}(entity));
 
 			return { labels, total: labels.length + dependencyTotal };
 		}
@@ -388,13 +419,15 @@ function createSimpleModule(
 
 function createSuperSimpleModule(index: number) {
 	return `
+		import { format, load } from "@app/framework";
+
 		export interface Summary${index} {
 			total: number;
 		}
 
 		export async function example${index}(prefix: string): Promise<Summary${index}> {
-			await Promise.resolve();
-			return { total: prefix.length + ${index} };
+			const entity = await load(\`\${prefix}${index}\`);
+			return { total: entity ? format(entity).length : prefix.length + ${index} };
 		}
 	`;
 }
