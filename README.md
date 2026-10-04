@@ -52,7 +52,8 @@ You can manually measure individual cases by running `hyperfine ../../node_modul
 Each comparison in `src/data.ts` can be modified to test:
 
 - `files`: roughly how many generated files should be linted
-  - Files repeat a pattern of two each: super simple, relatively simple, using generics, using result unions, and using all of those plus fancier types
+  - Like typical app code, 85% of files only use plain types: their own and those of a shared, generated `@app/framework` module with a large discriminated union
+  - 10% of files declare generics, and 5% declare result unions or fancier types such as mapped and conditional types
 - `layout`: what rough shape of imports those files exhibit:
   - `"even"`: a single root-level `index.ts` importing from roughly an even triangle shape of files
   - `"references"`: a single root-level `tsconfig.json` with project references to a few projects
@@ -74,7 +75,7 @@ Right now, `parserOptions.projectService` performs about the same as `parserOpti
 ┌───────┬───────────────────────┬───────────────────────┐
 │ files │ project (even layout) │ service (even layout) │
 ├───────┼───────────────────────┼───────────────────────┤
-│ 1024  │ '4.520 s ±  0.123 s'  │ '4.464 s ±  0.019 s'  │
+│ 1024  │ '3.859 s ±  0.024 s'  │ '3.968 s ±  0.039 s'  │
 └───────┴───────────────────────┴───────────────────────┘
 ```
 
@@ -83,7 +84,7 @@ See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.project
 ### Result Measurement Notes
 
 - Example measurements taken on an M1 Max Mac Studio with Node.js 24.15.0
-- These results were measured with typescript-eslint 8.70–8.71 and TypeScript 6.0
+- These results were measured with typescript-eslint 8.70 and TypeScript 6.0
 
 ## Comparisons
 
