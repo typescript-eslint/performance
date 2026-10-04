@@ -43,13 +43,108 @@ const modulePattern: readonly ModuleKindCreator[] = Array.from(
 			: createSimpleModule),
 );
 
+// Like real code, most files are short and a few are long: lines per file are skewed
+// right, with a median around 65 and a mean around 100.
+const sizeTargets = [
+	8, 11, 15, 19, 23, 27, 31, 36, 41, 48, 55, 62, 72, 84, 100, 119, 144, 175,
+	212, 262,
+];
+
 /** Creates modules in a repeating pattern of mostly plain modules, with a few advanced ones. */
 export function createModuleCycle(): ModuleCreator {
 	let created = 0;
 
-	return (index, dependencies = []) =>
-		modulePattern[created++ % modulePattern.length](index, dependencies);
+	return (index, dependencies = []) => {
+		const position = created++;
+		const module = modulePattern[position % modulePattern.length](
+			index,
+			dependencies,
+		);
+		const target = sizeTargets[(position * 7) % sizeTargets.length];
+		const helpers = createHelpers(index, target - countLines(module));
+
+		return helpers.includes("framework.")
+			? `import * as framework from "@app/framework";\n${module}\n${helpers}`
+			: `${module}\n${helpers}`;
+	};
 }
+
+function countLines(text: string) {
+	return text.split("\n").filter((line) => line.trim()).length;
+}
+
+// Plain app-style helpers without generics or fancy types, used to fill modules out to size.
+const helperCreators: readonly ((id: string, seed: number) => string)[] = [
+	(id) => `
+		export function buildLabel${id}(parts: readonly string[], separator = " / "): string {
+			return parts
+				.map((part) => part.trim())
+				.filter((part) => part.length > 0)
+				.join(separator);
+		}
+	`,
+	(id) => `
+		export function formatAmount${id}(amount: number, currency = "USD"): string {
+			const rounded = Math.round(amount * 100) / 100;
+			const sign = rounded < 0 ? "-" : "";
+			return \`\${sign}\${currency} \${Math.abs(rounded).toFixed(2)}\`;
+		}
+	`,
+	(id, seed) => `
+		export function isStale${id}(entity: framework.Entity, now = new Date()): boolean {
+			if (entity.status === "archived") {
+				return false;
+			}
+
+			const ageInDays = (now.getTime() - entity.createdAt.getTime()) / 86_400_000;
+			return ageInDays > ${30 + (seed % 60)} && entity.tags.length === 0;
+		}
+	`,
+	(id) => `
+		export async function loadName${id}(id: string, fallback: string): Promise<string> {
+			try {
+				const entity = await framework.load(id);
+				return entity ? framework.format(entity) : fallback;
+			} catch (error) {
+				console.error(\`Failed to load \${id}\`, error);
+				return fallback;
+			}
+		}
+	`,
+	(id, seed) => `
+		const limits${id} = {
+			daily: ${10 + (seed % 90)},
+			monthly: ${300 + (seed % 900)},
+			weekly: ${70 + (seed % 200)},
+		};
+
+		export function getLimit${id}(period: string): number {
+			return period === "monthly"
+				? limits${id}.monthly
+				: period === "weekly"
+					? limits${id}.weekly
+					: limits${id}.daily;
+		}
+	`,
+	(id) => `
+		export function summarizeValues${id}(values: readonly number[]): {
+			average: number;
+			max: number;
+			min: number;
+		} {
+			if (values.length === 0) {
+				return { average: 0, max: 0, min: 0 };
+			}
+
+			let total = 0;
+			for (const value of values) {
+				total += value;
+			}
+
+			return { average: total / values.length, max: Math.max(...values), min: Math.min(...values) };
+		}
+	`,
+];
 
 function createComplexModule(
 	index: number,
@@ -260,10 +355,6 @@ function createGenericModule(
 			return groups;
 		}
 
-		export function pluck${index}<T, K extends keyof T>(items: readonly T[], key: K): T[K][] {
-			return items.map((item) => item[key]);
-		}
-
 		export async function example${index}(prefix: string): Promise<Summary${index}> {
 			${createDependencyTotal(dependencies)}
 			await Promise.resolve();
@@ -274,11 +365,27 @@ function createGenericModule(
 				{ key: \`\${key}bb\` },
 				{ key: \`\${key}a\` },
 			]);
-			const groups = groupBy${index}(pluck${index}(items, "key"), (key) => key.length);
+			const groups = groupBy${index}(items.map((item) => item.key), (key) => key.length);
 
 			return { groups: groups.size, total: items.length + dependencyTotal };
 		}
 	`;
+}
+
+function createHelpers(index: number, lines: number) {
+	const helpers: string[] = [];
+	let remaining = lines;
+	for (let count = 0; remaining > 4; count++) {
+		const seed = index * 31 + count;
+		const helper = helperCreators[seed % helperCreators.length](
+			`${index}_${count}`,
+			seed,
+		);
+		helpers.push(helper);
+		remaining -= countLines(helper);
+	}
+
+	return helpers.join("\n");
 }
 
 function createImports(dependencies: readonly ModuleDependency[]) {
