@@ -32,8 +32,8 @@ export const comparisons = {
 		description: "parserOptions.project against parserOptions.projectService",
 		files: [1024],
 		layout: "even",
-		rules: ["floating"],
-		singleRun: false,
+		rules: ["recommended"],
+		singleRun: true,
 		types: localTypeScriptESLintPath
 			? ["project", "service", "native"]
 			: ["project", "service"],

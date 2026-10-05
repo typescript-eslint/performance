@@ -68,23 +68,23 @@ Each comparison in `src/data.ts` can be modified to test:
 
 ## Results
 
-Right now, `parserOptions.project` with single-run inference outperforms `parserOptions.projectService`.
+Right now, `parserOptions.project` outperforms `parserOptions.projectService`, by roughly 7%.
 This is a performance issue and we are investigating it as a bug.
 
 ```plaintext
-┌───────┬───────────────────────┬───────────────────────┐
-│ files │ project (even layout) │ service (even layout) │
-├───────┼───────────────────────┼───────────────────────┤
-│ 1024  │ '2.371 s ±  0.029 s'  │ '2.724 s ±  0.049 s'  │
-└───────┴───────────────────────┴───────────────────────┘
+┌───────┬───────────────┬───────────────────────┬───────────────────────┐
+│ files │ rules         │ project (even layout) │ service (even layout) │
+├───────┼───────────────┼───────────────────────┼───────────────────────┤
+│ 1024  │ 'recommended' │ '6.895 s ± 0.038 s'   │ '7.356 s ± 0.045 s'   │
+└───────┴───────────────┴───────────────────────┴───────────────────────┘
 ```
 
 See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.projectService no longer outperforms parserOptions.project](https://github.com/typescript-eslint/typescript-eslint/issues/9571) in typescript-eslint.
 
 ### Result Measurement Notes
 
-- Example measurements taken on an M1 Max Mac Studio with Node.js 22.12.0
-- These results are similar across TypeScript versions: 5.0.4, 5.4.5, and 5.5.3
+- Example measurements taken on an M1 Max Mac Studio with Node.js 24.15.0, TypeScript 6.0.3, and typescript-eslint 8.70.0
+- Single-run inference is enabled for both types
 
 ## Comparisons
 
