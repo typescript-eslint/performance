@@ -91,6 +91,8 @@ See [typescript-eslint/typescript-eslint#9571 Performance: parserOptions.project
 The [`comparisons/`](./comparisons) directory contains details on more specific comparisons.
 See each `comparisons/*.md` file for details on what's being measured.
 
+To add your own comparison or investigation, see [Adding Benchmarks in DEVELOPMENT.md](./.github/DEVELOPMENT.md#adding-benchmarks).
+
 ## Traces
 
 The [`traces/`](./traces) directory contains more specific traces for investigations.
