@@ -13,12 +13,23 @@ import {
 import { createProjectName } from "./utils.ts";
 
 interface Measurement {
-	mean: number;
-	stddev: number;
+	memory: Summary | undefined;
+	time: Summary;
 }
 
-function formatMeasurement({ mean, stddev }: Measurement) {
-	return `${mean.toFixed(3)} s ± ${stddev.toFixed(3)} s`;
+interface Summary {
+	mean: number;
+	stddev: null | number;
+}
+
+const bytesPerMebibyte = 1024 * 1024;
+
+function formatMemory({ mean, stddev }: Summary) {
+	return `${(mean / bytesPerMebibyte).toFixed(0)} MiB ± ${((stddev ?? 0) / bytesPerMebibyte).toFixed(0)} MiB`;
+}
+
+function formatTime({ mean, stddev }: Summary) {
+	return `${mean.toFixed(3)} s ± ${(stddev ?? 0).toFixed(3)} s`;
 }
 
 async function runProjectLint(data: CaseData): Promise<Measurement> {
@@ -39,6 +50,8 @@ async function runProjectLint(data: CaseData): Promise<Measurement> {
 		"--show-output",
 		"--warmup",
 		"1",
+		"--metrics",
+		"time_wall_clock,memory_peak_resident",
 		"--export-json",
 		exportPath,
 	]);
@@ -49,10 +62,20 @@ async function runProjectLint(data: CaseData): Promise<Measurement> {
 	}
 
 	const { results } = JSON.parse(await fs.readFile(exportPath, "utf8")) as {
-		results: Measurement[];
+		results: {
+			summary: {
+				memory_peak_resident?: Summary;
+				time_wall_clock: Summary;
+			};
+		}[];
 	};
 
-	return results[0];
+	const { summary } = results[0];
+
+	return {
+		memory: summary.memory_peak_resident,
+		time: summary.time_wall_clock,
+	};
 }
 
 const comparison = getComparison();
@@ -65,7 +88,7 @@ for (const data of getComparisonCases(comparison)) {
 const rows = comparison.files.flatMap((files) =>
 	comparison.rules.map((rules) => {
 		const row: Record<string, unknown> = { files, rules };
-		const means: Partial<Record<CaseData["types"], number>> = {};
+		const measured: Partial<Record<CaseData["types"], Measurement>> = {};
 
 		for (const types of comparison.types) {
 			const measurement = measurements.get(
@@ -78,14 +101,26 @@ const rows = comparison.files.flatMap((files) =>
 				}),
 			);
 			if (measurement) {
-				row[`${types} (${comparison.layout} layout)`] =
-					formatMeasurement(measurement);
-				means[types] = measurement.mean;
+				row[`${types} time (${comparison.layout} layout)`] = formatTime(
+					measurement.time,
+				);
+				if (measurement.memory) {
+					row[`${types} memory (${comparison.layout} layout)`] = formatMemory(
+						measurement.memory,
+					);
+				}
+				measured[types] = measurement;
 			}
 		}
 
-		if (means.native && means.service) {
-			row["native / service"] = `${(means.native / means.service).toFixed(2)}x`;
+		if (measured.native && measured.service) {
+			row["native / service time"] =
+				`${(measured.native.time.mean / measured.service.time.mean).toFixed(2)}x`;
+
+			if (measured.native.memory && measured.service.memory) {
+				row["native / service memory"] =
+					`${(measured.native.memory.mean / measured.service.memory.mean).toFixed(2)}x`;
+			}
 		}
 
 		return row;

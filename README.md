@@ -15,7 +15,7 @@
 
 ## Usage
 
-You'll need [hyperfine](https://github.com/sharkdp/hyperfine) installed locally, such as with `brew install hyperfine` or `winget install hyperfine`.
+You'll need [hyperfine](https://github.com/sharkdp/hyperfine) 2.0.0 or newer installed locally, such as with `brew install hyperfine` or `winget install hyperfine`.
 See [sharkdp/hyperfine#installation](https://github.com/sharkdp/hyperfine#installation).
 
 ```shell
