@@ -61,6 +61,8 @@ Each one lists the [measured attributes](../README.md#measured-attributes) to ge
 
 1. Add an entry to `comparisons`, such as:
 
+   <!-- eslint-skip -->
+
    ```ts
    wide: {
    	description: "parserOptions.project against parserOptions.projectService with wide imports",
