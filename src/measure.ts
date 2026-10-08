@@ -13,7 +13,6 @@ import {
 import { createProjectName } from "./utils.ts";
 
 interface Measurement {
-	/** Not reported by hyperfine on Windows. */
 	memory: Summary | undefined;
 	time: Summary;
 }

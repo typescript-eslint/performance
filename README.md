@@ -16,7 +16,6 @@
 ## Usage
 
 You'll need [hyperfine](https://github.com/sharkdp/hyperfine) 2.0.0 or newer installed locally, such as with `brew install hyperfine` or `winget install hyperfine`.
-Measurements record both wall-clock time and peak memory usage (except on Windows, where hyperfine doesn't support memory measurements).
 See [sharkdp/hyperfine#installation](https://github.com/sharkdp/hyperfine#installation).
 
 ```shell
