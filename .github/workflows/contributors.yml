@@ -2,13 +2,9 @@ jobs:
   contributors:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/prepare
       - env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        uses: JoshuaKGoldberg/all-contributors-auto-action@v0.4.3
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: JoshuaKGoldberg/all-contributors-auto-action@v0.7.0
 
 name: Contributors
 
@@ -16,3 +12,9 @@ on:
   push:
     branches:
       - main
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+  pull-requests: write
