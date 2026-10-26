@@ -12,7 +12,7 @@ export function createPackageFile(data: NamedCaseData) {
 			"@eslint/js": "*",
 			eslint: "*",
 			typescript: "*",
-			...(data.types === "native" && {
+			...(data.types === "tsgo" && {
 				"@typescript/native": `npm:typescript@${nativePreviewVersion}`,
 			}),
 			"typescript-eslint": localTypeScriptESLintPath

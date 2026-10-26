@@ -35,15 +35,15 @@ TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure
 
 `generate` and `measure` take an optional comparison type, defined in `comparisons` in `src/data.ts`:
 
-- `default`: `parserOptions.project` against `parserOptions.projectService`, plus the native backend when `TYPESCRIPT_ESLINT_PATH` is set
-- `native`: the classic project service against the TypeScript 7.1 native backend, across file counts and rule sets
+- `default`: `parserOptions.project` against `parserOptions.projectService`, plus the experimental tsgo backend when `TYPESCRIPT_ESLINT_PATH` is set
+- `tsgo`: the classic project service against the experimental TypeScript 7.1 tsgo backend, across file counts and rule sets
 
 ```shell
-TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run generate:native
-TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure:native
+TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run generate:tsgo
+TYPESCRIPT_ESLINT_PATH=$(realpath ../typescript-eslint) npm run measure:tsgo
 ```
 
-The native backend is unpublished, so the `native` comparison requires `TYPESCRIPT_ESLINT_PATH`.
+The tsgo backend is unpublished, so the `tsgo` comparison requires `TYPESCRIPT_ESLINT_PATH`.
 
 You can manually measure individual cases by running `hyperfine ../../node_modules/eslint/bin/eslint.js --ignore-failure --warmup 1`.
 
@@ -64,7 +64,7 @@ Each comparison in `src/data.ts` can be modified to test:
 - `types`: how type information is obtained for typed linting:
   - `"project"`: `parserOptions.project`
   - `"service"`: `parserOptions.projectService`
-  - `"native"`: `parserOptions.projectService` with the experimental TypeScript 7.1 native backend
+  - `"tsgo"`: `parserOptions.projectService` with the experimental TypeScript 7.1 tsgo backend (`EXPERIMENTAL_backend: "tsgo"`)
 
 ## Results
 
