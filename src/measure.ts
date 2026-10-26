@@ -113,13 +113,13 @@ const rows = comparison.files.flatMap((files) =>
 			}
 		}
 
-		if (measured.native && measured.service) {
-			row["native / service time"] =
-				`${(measured.native.time.mean / measured.service.time.mean).toFixed(2)}x`;
+		if (measured.tsgo && measured.service) {
+			row["tsgo / service time"] =
+				`${(measured.tsgo.time.mean / measured.service.time.mean).toFixed(2)}x`;
 
-			if (measured.native.memory && measured.service.memory) {
-				row["native / service memory"] =
-					`${(measured.native.memory.mean / measured.service.memory.mean).toFixed(2)}x`;
+			if (measured.tsgo.memory && measured.service.memory) {
+				row["tsgo / service memory"] =
+					`${(measured.tsgo.memory.mean / measured.service.memory.mean).toFixed(2)}x`;
 			}
 		}
 

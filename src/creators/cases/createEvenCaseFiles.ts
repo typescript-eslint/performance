@@ -86,10 +86,10 @@ function createIndexFile(count: number) {
 
 function eslintConfigTypes(data: CaseData) {
 	switch (data.types) {
-		case "native":
-			return "nativeProjectService" as const;
 		case "service":
 			return "projectService" as const;
+		case "tsgo":
+			return "tsgoProjectService" as const;
 		default:
 			return data.layout === "references"
 				? ("tsconfig.eslint.json" as const)

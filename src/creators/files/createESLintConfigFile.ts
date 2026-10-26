@@ -2,7 +2,7 @@ export interface ESLintConfigFileOptions {
 	rules: "floating" | "recommended";
 	singleRun: boolean;
 	types:
-		"nativeProjectService" | "projectService" | "tsconfig.eslint.json" | true;
+		"projectService" | "tsconfig.eslint.json" | "tsgoProjectService" | true;
 }
 
 export function createESLintConfigFile({
@@ -34,8 +34,8 @@ export function createESLintConfigFile({
 
 function createProjectOption(types: ESLintConfigFileOptions["types"]) {
 	switch (types) {
-		case "nativeProjectService":
-			return `projectService: { EXPERIMENTAL_backend: "native" }`;
+		case "tsgoProjectService":
+			return `projectService: { EXPERIMENTAL_backend: "tsgo" }`;
 		case "projectService":
 			return `projectService: true`;
 		case true:

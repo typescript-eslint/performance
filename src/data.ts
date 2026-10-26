@@ -11,7 +11,7 @@ export interface CaseData {
 	layout: "even" | "references" | "wide";
 	rules: "floating" | "recommended";
 	singleRun: boolean;
-	types: "native" | "project" | "service";
+	types: "project" | "service" | "tsgo";
 }
 
 export interface Comparison {
@@ -35,17 +35,17 @@ export const comparisons = {
 		rules: ["recommended"],
 		singleRun: true,
 		types: localTypeScriptESLintPath
-			? ["project", "service", "native"]
+			? ["project", "service", "tsgo"]
 			: ["project", "service"],
 	},
-	native: {
+	tsgo: {
 		description:
-			"the classic project service against the TypeScript 7.1 native backend",
+			"the classic project service against the experimental TypeScript 7.1 tsgo backend",
 		files: [128, 1024, 4096, 8192],
 		layout: "even",
 		rules: ["floating", "recommended"],
 		singleRun: false,
-		types: ["service", "native"],
+		types: ["service", "tsgo"],
 	},
 } satisfies Record<string, Comparison>;
 
@@ -58,9 +58,9 @@ export function getComparison(): Comparison & { name: ComparisonName } {
 			`Unknown comparison '${name}'. Expected one of: ${Object.keys(comparisons).join(", ")}.`,
 		);
 	}
-	if (name === "native" && !localTypeScriptESLintPath) {
+	if (name === "tsgo" && !localTypeScriptESLintPath) {
 		throw new Error(
-			"The native comparison needs TYPESCRIPT_ESLINT_PATH, as the native backend is unpublished.",
+			"The tsgo comparison needs TYPESCRIPT_ESLINT_PATH, as the tsgo backend is unpublished.",
 		);
 	}
 	return { ...comparisons[name], name };
